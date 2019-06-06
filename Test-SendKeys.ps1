@@ -1,9 +1,9 @@
 # SendKeys demo
 #
-# Windows Scripting Host: http://msdn.microsoft.com/en-us/library/8c6yea83
+# Windows Scripting Host: https://docs.microsoft.com/en-us/previous-versions/8c6yea83(v=vs.85)
 # .NET Framework: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys
 # VB.Net Window activation: https://docs.microsoft.com/en-us/dotnet/api/microsoft.visualbasic.interaction.appactivate
-# Wscript.Shell window activation: https://msdn.microsoft.com/en-us/library/wzcddbek
+# Wscript.Shell window activation: https://docs.microsoft.com/en-us/previous-versions/wzcddbek(v=vs.85)
 
 
 #region App name strings
@@ -25,9 +25,9 @@ Start-Sleep -Milliseconds 500
 #region sample with WScript.Shell
 $null = $WsShell.AppActivate($NotePadName)
 Start-Sleep -Milliseconds 300
-$WsShell.SendKeys('Tere, täna vaatame, kuidas arvuti ise töötab.~')
+$WsShell.SendKeys('Tere, tÃ¤na vaatame, kuidas arvuti ise tÃ¶Ã¶tab.~')
 Start-Sleep -Milliseconds 500
-$WsShell.SendKeys('kõigepealt käivitame kalkulaatori.~')
+$WsShell.SendKeys('kÃµigepealt kÃ¤ivitame kalkulaatori.~')
 Start-Sleep -Milliseconds 200
 #endregion
 
@@ -37,7 +37,7 @@ Start-Sleep -Milliseconds 1000
 #region sample with .NET
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 Start-Sleep -Milliseconds 200
-[System.Windows.Forms.SendKeys]::Sendwait('Ja nüüd arvutame.~~')
+[System.Windows.Forms.SendKeys]::Sendwait('Ja nÃ¼Ã¼d arvutame.~~')
 Start-Sleep -Milliseconds 500
 [System.Windows.Forms.SendKeys]::Sendwait('1{+}2=')
 Start-Sleep -Milliseconds 300
@@ -64,7 +64,7 @@ Start-Sleep -Milliseconds 1000
 #region UI Automation
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 100
-[System.Windows.Forms.SendKeys]::Sendwait('~Ja nüüd püüame liigutada Notepadi akent.~~')
+[System.Windows.Forms.SendKeys]::Sendwait('~Ja nÃ¼Ã¼d pÃ¼Ã¼ame liigutada Notepadi akent.~~')
 Start-Sleep -Milliseconds 500
 [System.Windows.Forms.SendKeys]::Sendwait('% ')
 #Start-Sleep -Milliseconds 100
@@ -85,14 +85,14 @@ Start-Sleep -Milliseconds 1000
 #region Shell Automation
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 Start-Sleep -Milliseconds 200
-[System.Windows.Forms.SendKeys]::Sendwait('~Minimeerime kõik aknad~')
+[System.Windows.Forms.SendKeys]::Sendwait('~Minimeerime kÃµik aknad~')
 Start-Sleep -Milliseconds 300
 $ObjShell.MinimizeAll()
 Start-Sleep -Milliseconds 2000
 $ObjShell.UndoMinimizeALL()
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 Start-Sleep -Milliseconds 200
-[System.Windows.Forms.SendKeys]::Sendwait('~vaatame kõiki töötavaid rakendusi~')
+[System.Windows.Forms.SendKeys]::Sendwait('~vaatame kÃµiki tÃ¶Ã¶tavaid rakendusi~')
 Start-Sleep -Milliseconds 300
 $ObjShell.WindowSwitcher()
 Start-Sleep -Milliseconds 2000
@@ -100,7 +100,7 @@ Start-Sleep -Milliseconds 2000
 Start-Sleep -Milliseconds 200
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 Start-Sleep -Milliseconds 200
-[System.Windows.Forms.SendKeys]::Sendwait('~jalutame mööda Start menüüd~')
+[System.Windows.Forms.SendKeys]::Sendwait('~jalutame mÃ¶Ã¶da Start menÃ¼Ã¼d~')
 Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('^{ESC}')
 Start-Sleep -Milliseconds 300
@@ -143,7 +143,7 @@ Start-Sleep -Milliseconds 3000
 #region Run As Admin
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 100
-[System.Windows.Forms.SendKeys]::Sendwait('~Nüüd aga püüame käivitada midagi admin õigustes.~')
+[System.Windows.Forms.SendKeys]::Sendwait('~NÃ¼Ã¼d aga pÃ¼Ã¼ame kÃ¤ivitada midagi admin Ãµigustes.~')
 Start-Sleep -Milliseconds 1000
 Start-Process -Verb runas powershell.exe
 Start-Sleep -Milliseconds 200
