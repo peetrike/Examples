@@ -51,12 +51,12 @@ Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('2')
 Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('~')
-Start-Sleep -Milliseconds 300
+Start-Sleep -Milliseconds 400
 [System.Windows.Forms.SendKeys]::Sendwait('^C')
 Start-Sleep -Milliseconds 300
 
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
-#Start-Sleep -Milliseconds 300
+Start-Sleep -Milliseconds 200
 $WsShell.SendKeys('^V~')
 Start-Sleep -Milliseconds 1000
 #endregion
@@ -97,9 +97,9 @@ Start-Sleep -Milliseconds 300
 $ObjShell.WindowSwitcher()
 Start-Sleep -Milliseconds 2000
 [System.Windows.Forms.SendKeys]::Sendwait('{ESC}')
-Start-Sleep -Milliseconds 200
+Start-Sleep -Milliseconds 500
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
-Start-Sleep -Milliseconds 200
+Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('~jalutame mööda Start menüüd~')
 Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('^{ESC}')
