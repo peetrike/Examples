@@ -130,8 +130,9 @@ Start-Sleep -Milliseconds 300
 $ie = New-Object -ComObject 'InternetExplorer.Application'
 $ie.navigate2('https://koolitus.ee')
 $ie.visible = $true
+$IeProccessId = (get-process iexplore)[0].Id
 Start-Sleep -Milliseconds 1000
-$null = $WsShell.AppActivate('IT Koolitus - Avaleht')
+[Microsoft.VisualBasic.Interaction]::AppActivate($IeProccessId)
 Start-Sleep -Milliseconds 3000
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 Start-Sleep -Milliseconds 100
