@@ -42,9 +42,17 @@
             Whitelist = @("cd")
         } #>
 
+        # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/AlignAssignmentStatement.md
+        PSAlignAssignmentStatement = @{
+            Enable = $true
+            CheckHashtable = $true
+        }
+
         # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/PlaceCloseBrace.md
         PSPlaceCloseBrace = @{
             Enable = $true
+            NoEmptyLineBefore = $true
+            NewLineAfter = $false
         }
         # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/PlaceOpenBrace.md
         PSPlaceOpenBrace = @{
@@ -60,22 +68,23 @@
         # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleCmdlets.md
         PSUseCompatibleCmdlets = @{
             Compatibility = @(
-                'desktop-2.0-windows'
+                #'desktop-2.0-windows'
                 'desktop-3.0-windows'
                 #'desktop-4.0-windows'
                 'desktop-5.1.14393.206-windows'
-                #'core-6.1.0-windows'
+                'core-6.1.0-windows'
             )
         }
 
         # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseConsistentIndentation.md
-        PSUseConsistentIndentation = @{
+        <# PSUseConsistentIndentation = @{
             Enable = $true
-        }
+        } #>
 
         # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseConsistentWhitespace.md
         PSUseConsistentWhitespace = @{
             Enable = $true
+            CheckOperator = $false
         }
 
         UseCompatibleCommmands = @{
@@ -94,7 +103,7 @@
                 "6.0"
                 "5.1"
                 "3.0"
-                "2.0"
+                #"2.0"
             )
             # You can specify commands to not check like this, which also will ignore its parameters:
             <# IgnoreCommands = @(

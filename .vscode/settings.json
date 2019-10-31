@@ -1,12 +1,3 @@
 {
-  "files.defaultLanguage": "powershell",
-
-  "powershell.codeFormatting.preset": "OTBS",
-  "powershell.scriptAnalysis.settingsPath": "PSScriptAnalyzerSettings.psd1",
-
-  "[powershell]": {
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true,
-    "files.trimTrailingWhitespace": true
-  }
+    "files.defaultLanguage": "powershell"
 }
