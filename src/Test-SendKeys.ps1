@@ -1,3 +1,5 @@
+#Requires -Version 2
+
 # SendKeys demo
 #
 # Windows Scripting Host: https://docs.microsoft.com/en-us/previous-versions/8c6yea83(v=vs.85)
