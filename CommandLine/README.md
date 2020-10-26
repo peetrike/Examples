@@ -23,9 +23,9 @@ Get-Help './02 Named Parameters.ps1' -Detailed
 Get-Help './03 Named with type.ps1' -Parameter One
 (Get-Command './05 Validate with type.ps1').Parameters.IpAddress
 (Get-Command './06 ValidateCount.ps1').ResolveParameter('Val')
-(Get-Command '.\02 Named Parameters.ps1').ResolveParameter('Kaks')
+(Get-Command './02 Named Parameters.ps1').ResolveParameter('Kaks')
 
-Start-Process (Get-Help './04 Named with validation.ps1').relatedlinks.navigationlink.uri
+Start-Process (Get-Help './07 ValidateString.ps1').relatedlinks.navigationlink.uri[-1]
 ```
 
 ## Concepts
