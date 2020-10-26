@@ -68,5 +68,5 @@ concept applies to variable names and function names.
 To make the code more readable (variables, functions, scripts), you could
 follow the recommendations from next sources:
 
-- [The PowerShell Best Practices and Style Guide](https://poshcode.gitbooks.io/powershell-practice-and-style/)
+- [The PowerShell Best Practices and Style Guide](https://poshcode.gitbooks.io/powershell-practice-and-style/content/Style-Guide/Code-Layout-and-Formatting.html)
 - [.NET Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines)
