@@ -41,7 +41,6 @@ param (
             Mandatory
         )]
         [AllowNull()]
-        [System.IO.FileInfo]
     $One,
         [parameter(Mandatory)]
         [ValidateNotNull()]
