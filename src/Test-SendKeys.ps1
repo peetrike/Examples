@@ -1,12 +1,25 @@
-#Requires -Version 2
+﻿#Requires -Version 2
+#Requires -Assembly "System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+#Requires -Assembly "Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 
-# SendKeys demo
-#
-# Windows Scripting Host: https://docs.microsoft.com/en-us/previous-versions/8c6yea83(v=vs.85)
-# .NET Framework: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys
-# VB.Net Window activation: https://docs.microsoft.com/en-us/dotnet/api/microsoft.visualbasic.interaction.appactivate
-# Wscript.Shell window activation: https://docs.microsoft.com/en-us/previous-versions/wzcddbek(v=vs.85)
+<#
+    .SYNOPSIS
+        Demonstrates how to automate keyboard-based user interface.
+    .DESCRIPTION
+        This example shows how script can emulate keyboard input and automate
+        several activities that are normally done interactively
+    .LINK
+        Windows Scripting Host: https://docs.microsoft.com/previous-versions/8c6yea83(v=vs.85)
+    .LINK
+        .NET Framework: https://docs.microsoft.com/dotnet/api/system.windows.forms.sendkeys
+    .LINK
+        VB.Net Window activation: https://docs.microsoft.com/dotnet/api/microsoft.visualbasic.interaction.appactivate
+    .LINK
+        WScript.Shell window activation: https://docs.microsoft.com/previous-versions/wzcddbek(v=vs.85)
+#>
 
+[CmdletBinding()]
+param ()
 
 #region App name strings
 $NotePadName = 'Notepad'
@@ -14,11 +27,22 @@ $CalcName = 'Kalkulaator'
 $UacName = 'Kasutajakonto kontroll'
 #endregion
 
-#region load nessessary libraries
-$WsShell = New-Object -ComObject 'Wscript.Shell'
+#region load necessary libraries
+$WsShell = New-Object -ComObject 'WScript.Shell'
 $ObjShell = New-Object -ComObject 'Shell.Application'
-Add-Type -AssemblyName Microsoft.VisualBasic
-Add-Type -AssemblyName System.Windows.Forms
+#Add-Type -AssemblyName Microsoft.VisualBasic
+#Add-Type -AssemblyName System.Windows.Forms
+#endregion
+
+#region Pause function
+function pause {
+    param (
+        [string]
+        $Message
+    )
+    Write-Host $Message
+    $null = Read-Host -Prompt 'Press ENTER to continue'
+}
 #endregion
 
 Start-Process $NotePadName
@@ -33,8 +57,10 @@ $WsShell.SendKeys('kõigepealt käivitame kalkulaatori.~')
 Start-Sleep -Milliseconds 200
 #endregion
 
-Start-Process 'calc'
+Start-Process calc
 Start-Sleep -Milliseconds 1000
+
+pause -Message 'App Automation'
 
 #region sample with .NET
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
@@ -63,6 +89,8 @@ $WsShell.SendKeys('^V~')
 Start-Sleep -Milliseconds 1000
 #endregion
 
+pause 'UI Automation'
+
 #region UI Automation
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 100
@@ -83,6 +111,8 @@ Start-Sleep -Milliseconds 300
 [System.Windows.Forms.SendKeys]::Sendwait('~')
 Start-Sleep -Milliseconds 1000
 #endregion
+
+pause 'Shell Automation'
 
 #region Shell Automation
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
@@ -124,6 +154,8 @@ Start-Sleep -Milliseconds 500
 Start-Sleep -Milliseconds 300
 #endregion
 
+pause 'Web Browsing'
+
 #region web browsing
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 100
@@ -142,6 +174,8 @@ Start-Sleep -Milliseconds 100
 Start-Process 'https://koolitus.ee'
 Start-Sleep -Milliseconds 3000
 #endregion
+
+pause 'RunAs'
 
 #region Run As Admin
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
