@@ -48,6 +48,7 @@ $LongTime = 1000
 #region load necessary libraries
 $WsShell = New-Object -ComObject 'WScript.Shell'
 $ObjShell = New-Object -ComObject 'Shell.Application'
+$Excel = New-Object -ComObject 'Excel.Application'
 Add-Type -AssemblyName Microsoft.VisualBasic
 Add-Type -AssemblyName System.Windows.Forms
 #endregion
@@ -74,7 +75,6 @@ Start-Sleep -Milliseconds $EnoughTime
 $WsShell.SendKeys('kõigepealt käivitame kalkulaatori.~')
 #Start-Sleep -Milliseconds $EnterTime
 
-$Excel = New-Object -ComObject 'Excel.Application'
 $Excel.Visible = $true
 $null = $WsShell.AppActivate($ExcelName)
 $Book = $Excel.Workbooks.Add()
