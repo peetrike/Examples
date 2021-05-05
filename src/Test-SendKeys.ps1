@@ -72,15 +72,15 @@ Start-Sleep -Milliseconds $EnterTime
 $WsShell.SendKeys('Tere, täna vaatame, kuidas arvuti ise töötab.~')
 Start-Sleep -Milliseconds $EnoughTime
 $WsShell.SendKeys('kõigepealt käivitame kalkulaatori.~')
-Start-Sleep -Milliseconds $EnterTime
-#endregion
+#Start-Sleep -Milliseconds $EnterTime
 
 $Excel = New-Object -ComObject 'Excel.Application'
 $Excel.Visible = $true
+$null = $WsShell.AppActivate($ExcelName)
 $Book = $Excel.Workbooks.Add()
 $Sheet = $book.ActiveSheet
-[Microsoft.VisualBasic.Interaction]::AppActivate($ExcelName)
 Start-Sleep -Milliseconds $EnoughTime
+#endregion
 
 
 #region sample with .NET
