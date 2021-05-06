@@ -73,7 +73,7 @@ Start-Sleep -Milliseconds $EnterTime
 $WsShell.SendKeys('Tere, täna vaatame, kuidas arvuti ise töötab.~')
 Start-Sleep -Milliseconds $EnoughTime
 $WsShell.SendKeys('kõigepealt käivitame kalkulaatori.~')
-#Start-Sleep -Milliseconds $EnterTime
+Start-Sleep -Milliseconds $EnoughTime
 
 $Excel.Visible = $true
 $null = $WsShell.AppActivate($ExcelName)
