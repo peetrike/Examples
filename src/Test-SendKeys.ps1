@@ -202,7 +202,7 @@ pause 'RunAs'
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 [Windows.Forms.SendKeys]::Sendwait('~Nüüd aga püüame käivitada midagi admin õigustes.~')
 Start-Sleep -Milliseconds $LongTime
-Start-Process -Verb runas powershell.exe
+Start-Process -Verb RunAs powershell.exe
 Start-Sleep -Milliseconds $EnoughTime
 [Microsoft.VisualBasic.Interaction]::AppActivate($UacName)
 [Windows.Forms.SendKeys]::Sendwait('{left}~')
