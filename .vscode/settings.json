@@ -4,10 +4,6 @@
   },
   "files.defaultLanguage": "powershell",
 
-  "search.exclude": {
-    "Release": true
-  },
-
   "powershell.codeFormatting.preset": "OTBS",
   "powershell.scriptAnalysis.settingsPath": "PSScriptAnalyzerSettings.psd1",
 

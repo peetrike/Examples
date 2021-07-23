@@ -7,12 +7,10 @@
     "eamodio.gitlens",
     "editorconfig.editorconfig",
     "ms-vscode.powershell",
-    "redhat.vscode-xml"
   ],
 
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": [
-    "ms-vscode-remote.remote-wsl",
     "ms-vsts.team"
   ]
 }
