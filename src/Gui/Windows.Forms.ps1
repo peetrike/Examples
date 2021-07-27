@@ -9,6 +9,9 @@ try {
 }
 #endregion
 
+
+#region MessageBox
+
 # https://docs.microsoft.com/dotnet/api/system.windows.forms.messagebox.show
 $result = [Windows.Forms.MessageBox]::Show($message)
 $result = [Windows.Forms.MessageBox]::Show($message, $title)
@@ -47,3 +50,34 @@ $result = [Windows.Forms.MessageBox]::Show(
     $IconOption,
     $DefaultButton
 )
+
+#endregion
+
+#region Notification balloon (toast message in Windows 10)
+
+try {
+    $null = [Drawing.Icon]
+} catch {
+    Add-Type -AssemblyName System.Drawing
+}
+
+# https://docs.microsoft.com/dotnet/api/System.Windows.Forms.NotifyIcon
+$NotifyIcon = New-Object System.Windows.Forms.NotifyIcon
+
+# https://docs.microsoft.com/dotnet/api/system.drawing.icon
+# $NotifyIcon.Icon = [Drawing.Icon]::new('C:\Program Files\PowerShell\7\assets\Powershell_black.ico')
+# https://docs.microsoft.com/dotnet/api/system.drawing.systemicons
+$NotifyIcon.Icon = [Drawing.SystemIcons]::Application
+
+# https://docs.microsoft.com/dotnet/api/system.windows.forms.tooltipicon
+# $NotifyIcon.BalloonTipIcon = 'Info'
+# $NotifyIcon.BalloonTipIcon = [Windows.Forms.ToolTipIcon]::Info
+
+$NotifyIcon.BalloonTipText = $message
+$NotifyIcon.BalloonTipTitle = $title
+$NotifyIcon.Text = 'A tooltip text'
+
+$NotifyIcon.Visible = $True
+$NotifyIcon.ShowBalloonTip(10000)
+
+#endregion
