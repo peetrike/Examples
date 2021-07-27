@@ -36,6 +36,7 @@ $result.GetNetworkCredential().Password
 $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', 'Yes, do it'
 $no = New-Object System.Management.Automation.Host.ChoiceDescription '&No', 'No, leave it as it is.'
 $cancel = [Management.Automation.Host.ChoiceDescription]'&Cancel'
+$cancel.HelpMessage = "Don't choose, cancel the whole thing"
 
 $options = ($yes, $no, $cancel)
 
