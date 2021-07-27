@@ -118,7 +118,7 @@
             )
         }
 
-        UseCompatibleTypes                        = @{
+        PSUseCompatibleTypes                      = @{
             # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleTypes.md
             Enable         = $true
             TargetProfiles = @(
