@@ -52,7 +52,8 @@ Add-Type -AssemblyName System.Windows.Forms
 #endregion
 
 #region Pause function
-function pause {
+function paus {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Scope='Function')]
     param (
         [string]
         $Message
@@ -82,7 +83,7 @@ Start-Sleep -Milliseconds $EnoughTime
 
 
 #region sample with .NET
-pause -Message 'App Automation'
+paus -Message 'App Automation'
 
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 200
@@ -111,7 +112,7 @@ $Excel.Quit()
 
 
 #region UI Automation
-pause 'UI Automation'
+paus 'UI Automation'
 
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 [Windows.Forms.SendKeys]::Sendwait('~Ja nüüd püüame liigutada Notepadi akent.~~')
@@ -134,7 +135,7 @@ Start-Sleep -Milliseconds $LongTime
 
 
 #region Shell Automation
-pause 'Shell Automation'
+paus 'Shell Automation'
 
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 #Start-Sleep -Milliseconds 200
@@ -177,7 +178,7 @@ Start-Sleep -Milliseconds $LongTime
 
 
 #region web browsing
-pause 'Web Browsing'
+paus 'Web Browsing'
 $WebSite = 'https://telia.ee'
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 [Windows.Forms.SendKeys]::Sendwait('~Lehitseme natuke veebi...~Internet Explorer~')
@@ -197,7 +198,7 @@ Start-Sleep -Milliseconds ($LongTime * 3)
 
 
 #region Run As Admin
-pause 'RunAs'
+paus 'RunAs'
 
 [Microsoft.VisualBasic.Interaction]::AppActivate($NotePadName)
 [Windows.Forms.SendKeys]::Sendwait('~Nüüd aga püüame käivitada midagi admin õigustes.~')
