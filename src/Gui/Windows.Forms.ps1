@@ -67,17 +67,24 @@ $NotifyIcon = New-Object System.Windows.Forms.NotifyIcon
 # https://docs.microsoft.com/dotnet/api/system.drawing.icon
 # $NotifyIcon.Icon = [Drawing.Icon]::new('C:\Program Files\PowerShell\7\assets\Powershell_black.ico')
 # https://docs.microsoft.com/dotnet/api/system.drawing.systemicons
-$NotifyIcon.Icon = [Drawing.SystemIcons]::Application
+$NotifyIcon.Icon = [Drawing.SystemIcons]::Question
+
+$NotifyIcon.Text = 'A notification from script'
+    # This makes system tray icon visible
+$NotifyIcon.Visible = $True
 
 # https://docs.microsoft.com/dotnet/api/system.windows.forms.tooltipicon
-# $NotifyIcon.BalloonTipIcon = 'Info'
 # $NotifyIcon.BalloonTipIcon = [Windows.Forms.ToolTipIcon]::Info
+# $NotifyIcon.BalloonTipIcon = 'Info'
 
 $NotifyIcon.BalloonTipText = $message
 $NotifyIcon.BalloonTipTitle = $title
-$NotifyIcon.Text = 'A tooltip text'
 
-$NotifyIcon.Visible = $True
-$NotifyIcon.ShowBalloonTip(10000)
+# when giving too small time for balloon tip, Windows applies system default timing
+$NotifyIcon.ShowBalloonTip(0)
 
+Start-Sleep -Seconds 10
+
+    # remove the icon from system tray
+$NotifyIcon.Visible = $false
 #endregion
