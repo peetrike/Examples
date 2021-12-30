@@ -1,4 +1,13 @@
-﻿Function Get-MostUsedCommand {
+﻿#Requires -Modules PSReadLine
+
+[CmdletBinding()]
+Param (
+        [int]
+        # top number of results to return
+    $Top = 5
+)
+
+Function Get-MostUsedCommand {
     <#
         .Synopsis
             Gets most used PowerShell commands
@@ -26,7 +35,6 @@
             Works in Windows PowerShell 5.1, PowerShell 7 Preview 1.
     #>
 
-    # Define the parameters
     [CmdletBinding()]
     Param (
             [int]
@@ -35,12 +43,15 @@
     )
 
     $ERR = $null
-    [System.Management.Automation.PSParser]::Tokenize((Get-Content (Get-PSReadLineOption).HistorySavePath), [ref]$ERR) |
+    [System.Management.Automation.PSParser]::Tokenize(
+        (Get-Content (Get-PSReadLineOption).HistorySavePath),
+        [ref]$ERR
+    ) |
         Where-Object { $_.Type -eq 'command' } |
         Select-Object -Property Content |
-        Group-Object -Property Content |
+        Group-Object -Property Content -NoElement |
         Sort-Object -Property Count, Name -Descending |
-        Select-Object -Property Count, Name -first $Top
+        Select-Object -First $Top
 }
 
-Get-MostUsedCommand
+Get-MostUsedCommand @PSBoundParameters
