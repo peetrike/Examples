@@ -28,7 +28,7 @@
 #function new-shortcut {
 
     [CmdletBinding(
-        DefaultParameterSetName="File",
+        DefaultParameterSetName='File',
         SupportsShouldProcess=$True
     )]
     #[OutputType([System.__ComObject#{f935dc23-1cf0-11d0-adb9-00c04fd58a0b}])]
@@ -37,10 +37,10 @@
                 Position=0,
                 ValueFromPipeline=$true,
                 Mandatory=$true,
-                ParameterSetName="File"
+                ParameterSetName='File'
             )]
             [ValidateNotNull()]
-            [Alias("file")]
+            [Alias('file')]
             [IO.FileInfo]
             # Specifies file(s) to make shortcut(s) from.  As an alternate, this could also be
             # program name from Path
@@ -49,10 +49,10 @@
                 Position=0,
                 ValueFromPipeline=$true,
                 Mandatory=$true,
-                ParameterSetName="Dir"
+                ParameterSetName='Dir'
             )]
             [ValidateNotNull()]
-            [Alias("dir")]
+            [Alias('dir')]
             [IO.DirectoryInfo]
             # Specifies folder(s) to make shortcut(s) from
         $DirItem,
@@ -60,49 +60,76 @@
                 Position=0,
                 ValueFromPipeline=$true,
                 Mandatory=$true,
-                ParameterSetName="Url"
+                ParameterSetName='Url'
             )]
-		    [ValidateNotNullOrEmpty()]
-            [Alias("url")]
+            [ValidateNotNullOrEmpty()]
+            [Alias('url')]
             [uri]
             # Specifies URI for shortcut
         $UrlItem,
             [Parameter(
                 Position=1,
                 Mandatory=$true,
-                ParameterSetName="Url"
+                ParameterSetName='Url'
             )]
             [Parameter(
                 Position=1,
                 Mandatory=$true,
-                ParameterSetName="Dir"
+                ParameterSetName='Dir'
             )]
             [Parameter(
                 Position=1,
                 Mandatory=$true,
-                ParameterSetName="File"
+                ParameterSetName='File'
             )]
             [ValidateNotNullOrEmpty()]
-            [Alias("Destination")]
+            [Alias('Destination')]
             [String]
             # Specifies folder where shortcut should be created
         $Target,
-            [Alias("System")]
+            [Parameter(
+                ParameterSetName='Url'
+            )]
+            [Parameter(
+                ParameterSetName='Dir'
+            )]
+            [Parameter(
+                ParameterSetName='File'
+            )]
+            [Alias('System')]
             [switch]
             # Specifies that -Target contains SpecialFolder reference
             # (look at https://docs.microsoft.com/dotnet/api/system.environment.specialfolder)
         $SystemFolder,
+            [Parameter(
+                ParameterSetName='Url'
+            )]
+            [Parameter(
+                ParameterSetName='Dir'
+            )]
+            [Parameter(
+                ParameterSetName='File'
+            )]
             [switch]
         $Force,
+            [Parameter(
+                ParameterSetName='Url'
+            )]
+            [Parameter(
+                ParameterSetName='Dir'
+            )]
+            [Parameter(
+                ParameterSetName='File'
+            )]
             [switch]
             # Pass the created shortcut object down the pipeline
         $PassThru,
             [Parameter(
                 Mandatory = $true,
-                ParameterSetName = "Version",
+                ParameterSetName = 'Version',
                 Position = 0
             )]
-            [Alias("v")]
+            [Alias('v')]
             [switch]
             # Show the script version number
         $Version
@@ -110,7 +137,7 @@
 
     begin {
 
-        if ($PSCmdlet.ParameterSetName -like "Version") {
+        if ($PSCmdlet.ParameterSetName -like 'Version') {
                 # Script version
             Set-Variable Ver -Option Constant -Scope Script -Value ([version]'1.1.0') -WhatIf:$false -Confirm:$false
             Write-Output $Ver
@@ -121,12 +148,12 @@
         if ($SystemFolder.IsPresent) {
             $shortcutSettings.Path = [Environment]::GetFolderPath($Target)
             if ($shortcutSettings.Path -eq '') {
-                throw [Management.Automation.ItemNotFoundException]("There is no system path called {0}" -f $Target)
+                throw [Management.Automation.ItemNotFoundException]('There is no system path called {0}' -f $Target)
             }
         } else {
             $shortcutSettings.Path = (Resolve-Path -Path $Target).Path
         }
-        Write-Verbose -Message ("shortcut will be saved to {0}" -f $shortcutSettings.Path)
+        Write-Verbose -Message ('shortcut will be saved to {0}' -f $shortcutSettings.Path)
 
         $yesToAll = $false
         $noToAll = $false
@@ -135,33 +162,33 @@
 
     process {
         switch ($PSCmdlet.ParameterSetName) {
-            "Dir" {
+            'Dir' {
                 $shortcutSettings.TargetPath = $DirItem.FullName
-                $shortcutSettings.Name = $DirItem.BaseName + ".lnk"
+                $shortcutSettings.Name = $DirItem.BaseName + '.lnk'
             }
-            "File" {
+            'File' {
                 if (Test-Path -Path $FileItem.FullName) {
                     $shortcutSettings.TargetPath = $FileItem.FullName
-                    $shortcutSettings.Name = $FileItem.BaseName + ".lnk"
+                    $shortcutSettings.Name = $FileItem.BaseName + '.lnk'
                 } elseif ($command = Get-Command -Name $FileItem.name -CommandType Application -ErrorAction Stop) {
                     $shortcutSettings.TargetPath = $command.Path
-                    $shortcutSettings.Name = $command.Name + ".lnk"
+                    $shortcutSettings.Name = $command.Name + '.lnk'
                 }
             }
-            "Url" {
+            'Url' {
                 $shortcutSettings.TargetPath = $UrlItem.AbsoluteUri
-                $shortcutSettings.Name = $UrlItem.Authority + ".url"
+                $shortcutSettings.Name = $UrlItem.Authority + '.url'
             }
         }
 
         $shortcutPath = Join-Path $shortcutSettings.Path $shortcutSettings.Name
 
-        if ($PSCmdLet.ShouldProcess($shortcutPath, "Create shortcut")) {
+        if ($PSCmdLet.ShouldProcess($shortcutPath, 'Create shortcut')) {
             $mustdo = $false
             if (Test-Path $shortcutPath -PathType Leaf) {
                 if ($Force -or $PSCmdlet.ShouldContinue(
-                        "Overwrite?",
-                        $("{0} already exists." -f $shortcutPath),
+                        'Overwrite?',
+                        $('{0} already exists.' -f $shortcutPath),
                         [ref] $yesToAll,
                         [ref] $noToAll
                     )
@@ -171,7 +198,7 @@
             }
 
             if ($mustdo) {
-                Write-Verbose ("Creating shortcut: {0}" -f $shortcutSettings.Name)
+                Write-Verbose ('Creating shortcut: {0}' -f $shortcutSettings.Name)
 
                 $shortcut = $WshShell.CreateShortcut($shortcutPath)
                 $shortcut.TargetPath = $shortcutSettings.TargetPath
@@ -182,5 +209,5 @@
                 }
             }
         }
-	}
+    }
 #}
