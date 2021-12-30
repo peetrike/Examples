@@ -1,10 +1,11 @@
 ﻿#Requires -Module BenchPress
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCmdLets', 'Get-CimInstance')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWMICmdlet', '')]
 param (
     $Min = 1,
     $Max = 100
 )
-
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
