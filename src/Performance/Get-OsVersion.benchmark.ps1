@@ -1,14 +1,14 @@
 ﻿#Requires -Module BenchPress
 
 param (
-    $Min = 10,
-    $Max = 1000
+    $Min = 1,
+    $Max = 100
 )
 
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
-        'GWMI full' = {
+        'GWMI full'         = {
             [Version] (Get-WmiObject -ClassName Win32_OperatingSystem).Version
         }
         'GWMI only version' = {
@@ -17,7 +17,10 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
         'GCIM only version' = {
             [Version] (Get-CimInstance -ClassName Win32_OperatingSystem -Property Version).Version
         }
-        '.NET' = {
+        'GCIM full'         = {
+            [Version] (Get-CimInstance -ClassName Win32_OperatingSystem).Version
+        }
+        '.NET'              = {
             [System.Environment]::OSVersion.Version
         }
     } -GroupName ('{0} times' -f $iterations)
