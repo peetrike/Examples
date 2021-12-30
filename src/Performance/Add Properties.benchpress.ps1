@@ -3,7 +3,7 @@
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'list')]
 param (
-    $Min = 1,
+    $Min = 10,
     $Max = 10000
 )
 
