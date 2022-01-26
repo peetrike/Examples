@@ -7,7 +7,7 @@ param (
 
 $paths = @(
     '"C:\IT\Monitoring\zabbix\bin\win64\zabbix_agentd.exe" --config "C:\IT\Monitoring\zabbix\conf\zabbix_agentd.win.conf"',
-    '"C:\Program Files\ET Zabbix Agent\zabbix_agentd.exe" --multiple-agents --config "C:\Program Files\ET Zabbix Agent\zabbix_agentd.conf"'
+    '"C:\Program Files\My Zabbix Agent\zabbix_agentd.exe" --multiple-agents --config "C:\Program Files\My Zabbix Agent\zabbix_agentd.conf"'
 )
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
