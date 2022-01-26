@@ -1,4 +1,5 @@
 #Requires -Modules ConfigDefender
+#Requires -RunAsAdministrator
 
 $Prefs = Get-MpPreference
 foreach ($Property in (Get-Member -InputObject $Prefs -Name Exclusion*).Name) {
