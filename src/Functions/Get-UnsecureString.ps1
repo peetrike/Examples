@@ -23,12 +23,14 @@ function Get-UnsecureString {
         $SecureString
     )
 
-    $BinaryString = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString);
+    process {
+        $BinaryString = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString);
 
-    try {
-        [Runtime.InteropServices.Marshal]::PtrToStringBSTR($BinaryString)
-    } finally {
-        [Runtime.InteropServices.Marshal]::FreeBSTR($BinaryString)
+        try {
+            [Runtime.InteropServices.Marshal]::PtrToStringBSTR($BinaryString)
+        } finally {
+            [Runtime.InteropServices.Marshal]::FreeBSTR($BinaryString)
+        }
     }
 }
 
