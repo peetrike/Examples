@@ -1,7 +1,7 @@
 #Requires -Version 2.0
 
 <#PSScriptInfo
-    .VERSION 1.0.0
+    .VERSION 32.17.900.6500
     .GUID f5630c89-b36f-4e1a-89d2-f74caf9c318d
 
     .AUTHOR Peter Wawa
@@ -40,8 +40,8 @@ if ($Version.IsPresent) {
         $VersionInfo = (Test-ScriptFileInfo -Path $PSCommandPath -ErrorAction Stop).Version
     } catch {
         Write-Verbose -Message 'Test-ScriptFileInfo failed, reverting to regular expression search'
-        $result = Select-String -Path $MyInvocation.MyCommand.Path -Pattern '\.Version (.*)$'
-        $VersionInfo = ($result[0].Matches | Select-Object -ExpandProperty Groups)[1].Value
+        $result = Select-String -Path $MyInvocation.MyCommand.Path -Pattern '^\s*\.VERSION (\d+(\.\d+){0,3})$'
+        $VersionInfo = ($result.Matches | Select-Object -ExpandProperty Groups)[1].Value
     }
 
     if ($AsString.IsPresent) {
