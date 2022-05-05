@@ -7,7 +7,7 @@ param (
 )
 Get-WinEvent -FilterHashtable @{
     LogName   = 'Microsoft-Windows-DNS-Client/Operational'
-    Id        = 3008
+    Id        = 3008    # DNS query is completed for the name
     StartTime = [datetime]::Now.AddHours(-$Hours)
     Data      = $QueryName
 } | ForEach-Object {
