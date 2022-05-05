@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
         [string]
-    $QueryName = 'rdm.et.ee',
+    $QueryName = 'www.ee',
         [int]
     $Hours = 1
 )
