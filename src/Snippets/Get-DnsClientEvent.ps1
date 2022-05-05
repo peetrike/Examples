@@ -1,12 +1,14 @@
 [CmdletBinding()]
 param (
         [string]
-    $QueryName = 'rdm.et.ee'
+    $QueryName = 'rdm.et.ee',
+        [int]
+    $Hours = 1
 )
 Get-WinEvent -FilterHashtable @{
     LogName   = 'Microsoft-Windows-DNS-Client/Operational'
     Id        = 3008
-    StartTime = [datetime]::Now.AddHours(-1)
+    StartTime = [datetime]::Now.AddHours(-$Hours)
     Data      = $QueryName
 } | ForEach-Object {
     $xmlevent = [xml]$_.ToXml()
@@ -18,7 +20,8 @@ Get-WinEvent -FilterHashtable @{
     [pscustomObject] @{
         TimeCreated = $_.TimeCreated
         QueryName   = $xmlevent.SelectNodes('//*[@Name = "QueryName"]').InnerText
-        Process     = $Process.Name
+        ProcessId   = $ProcessId
+        ProcessName = $Process.Name
         ProcessPath = $Process.Path
         Parent      = $ParentProcess.Name
     }
