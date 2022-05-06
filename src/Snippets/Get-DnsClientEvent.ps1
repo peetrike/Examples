@@ -11,15 +11,24 @@ Get-WinEvent -FilterHashtable @{
     StartTime = [datetime]::Now.AddHours(-$Hours)
     Data      = $QueryName
 } | ForEach-Object {
-    $xmlevent = [xml]$_.ToXml()
-    $ProcessId = $xmlevent.event.System.Execution.ProcessId
-    $Process = Get-Process -id $ProcessId
-    $ParentProcess = Get-Process -Id (
-        Get-CimInstance Win32_Process -Filter "ProcessId = $ProcessId"
-    ).ParentProcessId
+    $xmlEvent = [xml]$_.ToXml()
+    $ProcessId = $_.ProcessId
+    if ($Process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue) {
+        $parentProccessId = (
+            Get-CimInstance Win32_Process -Filter "ProcessId = $ProcessId" -ErrorAction Ignore
+        ).ParentProcessId
+        if ($parentProccessId) {
+            $ParentProcess = Get-Process -Id $parentProccessId
+        } else {
+            $ParentProcess = $null
+        }
+    } else {
+        $Process = $ParentProcess = $null
+    }
+
     [pscustomObject] @{
         TimeCreated = $_.TimeCreated
-        QueryName   = $xmlevent.SelectNodes('//*[@Name = "QueryName"]').InnerText
+        QueryName   = $xmlEvent.SelectNodes('//*[@Name = "QueryName"]').InnerText
         ProcessId   = $ProcessId
         ProcessName = $Process.Name
         ProcessPath = $Process.Path
