@@ -118,18 +118,24 @@ Get-WinEvent -FilterHashtable @{
 #endregion
 
 #region Extracting properties from event
+
 $MyEvent = Get-WinEvent -FilterHashtable @{
     ProviderName = 'Service Control Manager'
     ID           = 7040  # service start type was changed
 } -MaxEvents 1
 
 $MyEvent | Get-Member
+# https://docs.microsoft.com/dotnet/api/System.Diagnostics.Eventing.Reader.EventLogRecord
+
 $MyEvent | Format-List *
 $MyEvent.Message
 
 $MyEvent.Properties
 $MyEvent.Properties[0]  # Service display name
 $MyEvent.Properties[3]  # Service short name
+
+# https://github.com/peetrike/scripts/blob/master/src/ActiveDirectory/ADFS/Get-AdfsAuditEvent516.ps1
+# https://github.com/peetrike/scripts/blob/master/src/Filesystem/Get-EventReport.ps1
 
 #region Using named properties
 
@@ -142,6 +148,7 @@ $MyEvent = Get-WinEvent -FilterHashtable @{
 
 $MyEvent.Properties
 
+    # asking for specific named parameters
 [string[]] $xPathRefs = @(
     'Event/System/Security/@UserID'
     'Event/System/TimeCreated/@SystemTime'
@@ -152,8 +159,11 @@ $MyEvent.Properties
 $LogPropertyContext = [Diagnostics.Eventing.Reader.EventLogPropertySelector]::new($xPathEnum)
 $MyEvent.GetPropertyValues($LogPropertyContext)
 
+    # Obtaining event XLM form
 $EventXml = [xml] $MyEvent.ToXml()
 
+$EventXml.GetType()
+$EventXml | Get-Member
 $EventXml
 $EventXml.Event
 $EventXml.Event.System
@@ -173,6 +183,12 @@ $EventXml.Event.EventData.Data | Where-Object Name -like 'HostName' | Get-Member
 $EventXml | Get-Member -name Select*
 $EventXml.SelectSingleNode('//*[@Name = "HostName"]')
 $EventXml.SelectSingleNode('//*[@Name = "HostName"]').InnerText
+
+    # speed difference
+Measure-Command { ($EventXml.Event.EventData.Data | Where-Object Name -like 'HostName').InnerText }
+Measure-Command { $EventXml.SelectSingleNode('//*[@Name = "HostName"]').InnerText }
+
+# https://github.com/peetrike/Examples/blob/main/src/Snippets/Get-DnsClientEvent.ps1
 
 #endregion
 
@@ -194,6 +210,8 @@ $milliSeconds = 3600 * 1000 # 1 hour in milliseconds
 $Filter = '*[System[(EventID = 4624) and TimeCreated[timediff(@SystemTime) <= {0}]]]' -f $milliSeconds
 Get-WinEvent -LogName Security -FilterXPath $Filter
 
+# https://docs.microsoft.com/windows/win32/wes/consuming-events
+
 Get-WinEvent -FilterHashtable @{
     LogName      = 'Application'
     ProviderName = 'Application Error'
@@ -202,6 +220,9 @@ Get-WinEvent -FilterHashtable @{
 
 $Filter = '*[System/Provider[@Name="application error"] and (EventData/Data="vmconnect.exe")]'
 Get-WinEvent -LogName Application -FilterXPath $filter
+
+# https://github.com/peetrike/scripts/blob/master/src/ComputerManagement/EventLog/Get-LogonReport.ps1
+# https://github.com/peetrike/scripts/blob/master/src/RdpServer/Get-RdpLogonReport.ps1
 
 #endregion
 
