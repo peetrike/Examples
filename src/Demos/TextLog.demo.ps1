@@ -37,12 +37,15 @@ $XmlContent.SelectNodes('//data')
 $JsonContent = Get-Content mylog.json | ConvertFrom-Json
 
 $JsonContent | Where-Object Name -like 'myData'
+    # or
+$jsoncontent.data.myData
 
 #endregion
 
 #region (ab)Using CSV log files
 
 $MyData = Import-Csv mylog.txt
+$MyData | Where-Object Name -like 'myData'
 
 Get-Help Import-Csv
 
@@ -54,13 +57,15 @@ $MyData = @(
     Get-Content mylog.txt
 ) | ConvertFrom-Csv
 
-# Estonian regional settings
+    # Estonian regional settings
 $MyData = Import-Csv mylog.txt -UseCulture
 $MyData = Import-Csv mylog.txt -Delimiter ';'
 
-Get-Help import-csv -Parameter Encoding
+Get-Help Import-Csv -Parameter Encoding
     # this is for PowerShell 7
-$MyData = Import-Csv mylog.txt -UseCulture -Encoding utf8BOM
+$MyData = Import-Csv mylog.txt -UseCulture -Encoding 'windows-1257'
+    # tis is for Windows PowerShell
+$MyData = Import-Csv mylog.txt -UseCulture -Encoding default
 
 Get-Help Import-Csv -Parameter Delimiter
 Import-Csv mylog.txt -Delimiter "`t"
@@ -69,9 +74,11 @@ Import-Csv mylog.txt -Delimiter "`t"
 
 #region Searching from text files
 
-Get-help Select-String
+Get-help Select-String -ShowWindow
 
-Select-String -Pattern '^#' -Path *.txt
+Select-String -Pattern '^[^#]' -Path *.txt
+
+(Get-Help Select-String).examples.example[2]
 
     #multiline log files
 Get-Help Select-String -Parameter Context
@@ -90,8 +97,9 @@ netstat.exe -abno |
 #endregion
 
 #region Converting text file with loose structure to array of objects
-#Requires -Version 5.0
 
+#Requires -Version 5.0
+# https://docs.microsoft.com/powershell/scripting/whats-new/unix-support#microsoftpowershellutility-cmdlets
 Get-Help ConvertFrom-String
 Get-Help ConvertFrom-String -Examples
 
@@ -99,7 +107,7 @@ Get-Help ConvertFrom-String -Parameter Delimiter
     # this is the actual default delimiter
 $myData = Get-Content myfile.log | ConvertFrom-String -Delimiter '\s+'
 
-"tere tulemast" | ConvertFrom-String
+'tere tulemast' | ConvertFrom-String
 "tere `t tulemast" | ConvertFrom-String
 "tere `t tulemast" | ConvertFrom-String -PropertyNames 'yks', 'kaks'
 
