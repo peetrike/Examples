@@ -136,6 +136,8 @@ function Get-PortProcess {
 #Requires RunAsAdministrator
 Get-PortProcess -Port 3389, 5985
 
+# https://lazywinadmin.com/2014/09/powershell-convertfrom-string-and.html
+
     # or https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/convertfrom-string#example-4-use-an-expression-as-the-value-of-the-templatecontent-parameter-save-the-results-in-a-variable
 (Get-Help ConvertFrom-String).examples.example[4]
     # https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/convertfrom-string#example-5-specifying-data-types-to-the-generated-properties
