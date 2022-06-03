@@ -37,7 +37,7 @@ Start-Process -FilePath cmd.exe -ArgumentList '/k', 'powershell', '-c get-date'
 Start-Process -FilePath cmd.exe -ArgumentList '/k', 'echo get-date | powershell -c -'
 
 $command = 'Write-Output $PSVersionTable.PSVersion'
-$bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+$bytes = [Text.Encoding]::Unicode.GetBytes($command)
 $encodedCommand = [Convert]::ToBase64String($bytes)
 powershell.exe -encodedCommand $encodedCommand
 
@@ -63,7 +63,7 @@ $version.Major
 
 #region Running PowerShell code as another user (or admin)
 
-Get-ScheduledTask -TaskPath \meelis -TaskName katse | Start-ScheduledTask
+Get-ScheduledTask -TaskPath \Meelis\ -TaskName katse | Start-ScheduledTask
 schtasks.exe -query -tn \Meelis\katse
 schtasks.exe -run -tn \Meelis\katse
 
@@ -107,7 +107,6 @@ Invoke-Item .\commands.txt
 pwsh -c (Get-Content .\commands.txt -Raw)
 
 $Url = 'https://raw.githubusercontent.com/peetrike/Examples/main/src/Gui/OpenFileDialog.ps1'
-
 $content = (Invoke-WebRequest -Uri $url).Content
 Invoke-Expression $content
 
@@ -125,7 +124,7 @@ Get-Help about_Character_Encoding -ShowWindow
 Get-Command -ParameterName Encoding
 
 Get-Help Set-Content -Parameter Encoding
-[enum]::GetValues([Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding])
+[Enum]::GetValues([Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding])
 
 
 'Tõotus' | Set-Content -Path .\test.txt -Encoding utf8
@@ -162,17 +161,17 @@ Get-Help ConvertTo-Xml
 # https://devblogs.microsoft.com/powershell/outputencoding-to-the-rescue/
 
 $OutputEncoding
-[console]::OutputEncoding
-[console]::InputEncoding
+[Console]::OutputEncoding
+[Console]::InputEncoding
 
 # https://docs.microsoft.com/dotnet/api/system.console.inputencoding
 # https://docs.microsoft.com/dotnet/api/system.console.outputencoding
 
-$OutputEncoding = [console]::OutputEncoding
+$OutputEncoding = [Console]::OutputEncoding
 'Tõotus' | findstr /c:õ
 
 
-$OutputEncoding = [console]::OutputEncoding = [console]::InputEncoding = [Text.Encoding]::UTF8
+$OutputEncoding = [Console]::OutputEncoding = [console]::InputEncoding = [Text.Encoding]::UTF8
 
 #endregion
 
