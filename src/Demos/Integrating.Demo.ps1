@@ -36,7 +36,7 @@ powershell.exe -o xml -c Get-Date
 Start-Process -FilePath cmd.exe -ArgumentList '/k', 'powershell', '-c get-date'
 Start-Process -FilePath cmd.exe -ArgumentList '/k', 'echo get-date | powershell -c -'
 
-$command = 'dir "c:\program files" '
+$command = 'Write-Output $PSVersionTable.PSVersion'
 $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
 $encodedCommand = [Convert]::ToBase64String($bytes)
 powershell.exe -encodedCommand $encodedCommand
@@ -62,6 +62,12 @@ $version.Major
 #endregion
 
 #region Running PowerShell code as another user (or admin)
+
+Get-ScheduledTask -TaskPath \meelis -TaskName katse | Start-ScheduledTask
+schtasks.exe -query -tn \Meelis\katse
+schtasks.exe -run -tn \Meelis\katse
+
+Get-Help Start-Process -Parameter credential
 
 # https://peterwawa.wordpress.com/2010/04/28/powershell-ja-admin-oigused/
 Get-Help Start-AsAdmin
