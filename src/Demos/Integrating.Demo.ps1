@@ -78,6 +78,9 @@ Find-Module RunAsUser -Repository PSGallery
 
 # https://gist.github.com/jborean93/33c55bdd47541866dfaea43ab38d2c79
 
+# other external tools that allow run processes as someone else:
+# https://runas.eu/
+
 #endregion
 
 #region ExecutionPolicy
