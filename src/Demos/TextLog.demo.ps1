@@ -89,7 +89,7 @@ $found | Get-Member
 (Get-Help Select-String).examples.example[7]
 
 # https://peterwawa.wordpress.com/2011/12/13/vikesed-asjad-vrgus/
-#Requires RunAsAdministrator
+# Requires -RunAsAdministrator
 netstat.exe -abno |
     Select-String ':3389 ' -Context 0, 1 |
     Where-Object { $_.line -like '*listening*' }
@@ -121,19 +121,19 @@ function Get-PortProcess {
     )
 
     netstat -ano |
-        select-string ($(foreach ($p in $Port) {':{0} ' -f $p}) -join '|') |
+        select-string ($(foreach ($p in $Port) { ':{0} ' -f $p }) -join '|') |
         select-string 'listening' |
         ConvertFrom-String -PropertyNames Empty,
-            Protocol, LocalAddress, RemoteAddress, State, ProccessId |
+            Protocol, LocalAddress, RemoteAddress, State, ProcessId |
         ForEach-Object {
             $row = $_
-            Get-Process -Id $_.ProccessId |
+            Get-Process -Id $_.ProcessId |
                 Add-Member -NotePropertyName Port -NotePropertyValue ([int]$row.LocalAddress.split(':')[-1]) -PassThru |
-                Select-Object -Property Port, Processname, Path
+                Select-Object -Property Port, ProcessName, Path
         } |
         Sort-Object -Property Port -Unique
 }
-#Requires RunAsAdministrator
+# Requires -RunAsAdministrator
 Get-PortProcess -Port 3389, 5985
 
 # https://lazywinadmin.com/2014/09/powershell-convertfrom-string-and.html
