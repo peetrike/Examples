@@ -22,11 +22,12 @@ Get-CimInstance -ClassName Win32_ShadowCopy | ForEach-Object {
     $Provider = $_ | Get-CimAssociatedInstance -Association Win32_ShadowBy
     [pscustomObject]@{
         Id               = $_.ID
-        InstallDate      = $_.InstallDate
+        CreationDate     = $_.InstallDate
         Volume           = $volume.caption
         Target           = $Target.caption
         Provider         = $Provider.Name
         ClientAccessible = $_.ClientAccessible
+        NoAutoRelease    = $_.NoAutoRelease
         NoWriters        = $_.NoWriters
         Persistent       = $_.Persistent
         State            = $_.State
