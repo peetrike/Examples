@@ -1,5 +1,6 @@
 ﻿#Requires -Version 3
 #Requires -Modules CimCmdlets
+#Requires -RunAsAdministrator
 
 Get-CimInstance -ClassName Win32_ShadowCopy | ForEach-Object {
     $volume = $_ | Get-CimAssociatedInstance -Association Win32_ShadowFor
