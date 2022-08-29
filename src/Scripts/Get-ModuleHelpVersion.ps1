@@ -1,5 +1,4 @@
 ﻿#Requires -Version 3
-# get-modulehelpversion
 
 [CmdletBinding()]
 param (
