@@ -55,6 +55,7 @@ throw "You're not supposed to run the entire script"
         Get-Help ANSI_Terminals -ShowWindow
 
         $PSStyle.OutputRendering
+
         Get-Process pwsh
         $PSStyle.OutputRendering = [Management.Automation.OutputRendering]::PlainText
         Get-Process pwsh
@@ -244,6 +245,7 @@ throw "You're not supposed to run the entire script"
     Get-ADComputer -Identity $env:COMPUTERNAME -Properties $PropertyList
 
     Get-ADComputer -Filter { OperatingSystemVersion -like '5.*' } | Measure-Object
+        # Windows Server 2022
     Get-ADComputer -Filter { OperatingSystemVersion -like '*(20348)' } | Measure-Object
     Get-ADComputer -Filter { OperatingSystem -like 'Windows 11*' } -Properties $PropertyList |
         Select-Object Name, Operating*
