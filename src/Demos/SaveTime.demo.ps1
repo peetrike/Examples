@@ -108,6 +108,9 @@ throw "You're not supposed to run the entire script"
 
     Get-ADUser -Identity adam
     Measure-Command {
+        Get-ADUser -Identity adam
+    }
+    Measure-Command {
         Get-ADUser -Filter { Name -like 'Adam*' }
     }
     Measure-Command {
