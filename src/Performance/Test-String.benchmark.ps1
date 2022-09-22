@@ -3,8 +3,8 @@ using namespace System.Text
 
 param (
     $Min = 10,
-    $Max = 100000,
-    $Repeat = 1
+    $Max = 10000,
+    $Repeat = 10
 )
 
 
@@ -21,6 +21,13 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
             foreach ($i in 1..$iterations) {
                 [void] $string.Append([char](Get-Random -Minimum 1 -Maximum 0x0530))
             }
+        }
+        'CharArray'     = {
+            -join @(
+                foreach ($i in 1..$iterations) {
+                    [char](Get-Random -Minimum 1 -Maximum 0x0530)
+                }
+            )
         }
     } -GroupName ($Iterations * $Repeat)
 }
