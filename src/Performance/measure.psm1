@@ -9,11 +9,11 @@
     )
 
     $Type = @{
-        Name       ='Method'
+        Name       = 'Method'
         Expression = { $Method }
     }
 
     1..$Iterations |
         Measure-Command $ScriptBlock |
-        Select-Object -Property TotalMilliseconds, $Type
+        Select-Object -Property $Type, TotalMilliseconds
 }
