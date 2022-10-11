@@ -1,5 +1,9 @@
 ﻿#Requires -version 2.0
 
+<#PSScriptInfo
+    .VERSION 1.1.0
+#>
+
 <#
     .SYNOPSIS
         Creates a shortcut from input object.
@@ -8,7 +12,8 @@
     .EXAMPLE
         Get-ChildItem -Path "$env:ProgramFiles\MyApp" -Filter *.exe | New-Shortcut -Target .
 
-        This example creates shortcuts to current working directory for every .exe file discovered by Get-ChildItem.
+        This example creates shortcuts to current working directory for every .exe
+        file discovered by Get-ChildItem.
     .EXAMPLE
         New-Shortcut -Url http://www.ee -Target Personal -SystemFolder
 
@@ -136,19 +141,26 @@
     )
 
     begin {
-
         if ($PSCmdlet.ParameterSetName -like 'Version') {
                 # Script version
-            Set-Variable Ver -Option Constant -Scope Script -Value ([version]'1.1.0') -WhatIf:$false -Confirm:$false
-            Write-Output $Ver
-            exit 3
+            try {
+                $VersionInfo = (Test-ScriptFileInfo -Path $PSCommandPath -ErrorAction Stop).Version
+            } catch {
+                Write-Verbose -Message 'Test-ScriptFileInfo failed, reverting to regular expression search'
+                $result = Select-String -Path $MyInvocation.MyCommand.Path -Pattern '^\s*\.VERSION (\d+(\.\d+){0,3})$'
+                $VersionInfo = ($result.Matches | Select-Object -ExpandProperty Groups)[1].Value
+            }
+
+            return ([version] $VersionInfo)
         }
 
         $shortcutSettings = @{}
         if ($SystemFolder.IsPresent) {
             $shortcutSettings.Path = [Environment]::GetFolderPath($Target)
             if ($shortcutSettings.Path -eq '') {
-                throw [Management.Automation.ItemNotFoundException]('There is no system path called {0}' -f $Target)
+                throw [Management.Automation.ItemNotFoundException](
+                    'There is no system path called {0}' -f $Target
+                )
             }
         } else {
             $shortcutSettings.Path = (Resolve-Path -Path $Target).Path
@@ -178,6 +190,9 @@
             'Url' {
                 $shortcutSettings.TargetPath = $UrlItem.AbsoluteUri
                 $shortcutSettings.Name = $UrlItem.Authority + '.url'
+            }
+            'Version' {
+                return
             }
         }
 
