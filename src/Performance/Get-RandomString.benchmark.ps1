@@ -112,7 +112,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         } -RepeatCount $Iterations -GroupName "Length $length "
     }
 } else {
-    import-module .\measure.psm1
+    Import-Module .\measure.psm1
     Measure-ScriptBlock -Method 'Original' -ScriptBlock { Get-RandomString -Length 64 } -Iterations $Iterations
     Measure-ScriptBlock -Method 'NewRandom' -ScriptBlock { Get-RandomString1 -Length 64 } -Iterations $Iterations
     Measure-ScriptBlock -Method 'New' -ScriptBlock { Get-RandomString2 -Length 64 } -Iterations $Iterations
