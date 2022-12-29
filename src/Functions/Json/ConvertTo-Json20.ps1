@@ -172,7 +172,6 @@ function ConvertTo-Json20 {
             This example converts directory listing to JSON format, expanding only 1 level of objects
     #>
 
-    [Alias('ConvertTo-STJson')]
     [OutputType([String])]
     [CmdletBinding()]
     param (
