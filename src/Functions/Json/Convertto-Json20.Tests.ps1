@@ -42,13 +42,6 @@ Describe ConvertTo-Json20 {
             ConvertTo-Json20 -InputObject "1.12e-2" -Compress | Should -Be """1.12e-2"""
         }
 
-        It 'A number as a string should not be quoted if -StringToNumber is passed' {
-            ConvertTo-Json20 -InputObject "1KB" -Compress -StringToNumber | Should -Be '1024'
-            ConvertTo-Json20 -InputObject "1.1" -Compress -StringToNumber | Should -Be '1.1'
-            ConvertTo-Json20 -InputObject "1.12e-2" -Compress -StringToNumber | Should -Be '0.0112'
-
-        } -Skip
-
         It 'Double quotes, newlines and carriage returns are escaped within a string' {
             ConvertTo-Json20 -InputObject "string with a`n newline a `r carriage return and a `"quoted`" word" -Compress |
                 Should -Be '"string with a\n newline a \r carriage return and a \"quoted\" word"'
@@ -156,6 +149,18 @@ Describe ConvertTo-Json20 {
                 }
             ) -Compress -Depth 4 |
                 Should -Be '[[1,2,3],"a","b",{"NestedMore":[1,{"foo":{"key":"bar"}}]}]'
+        }
+
+        It 'Test .NET object conversion' {
+            $Object = (Get-UICulture).Calendar
+            $comparisonString = (
+                '{"AlgorithmType":1,"CalendarType":1,"Eras":"1","IsReadOnly":' +
+                $Object.IsReadOnly.ToString().ToLower() + ',"MaxSupportedDateTime":"\/Date(253402293600000)\/",' +
+                '"MinSupportedDateTime":"\/Date(-62135596800000)\/","TwoDigitYearMax":' +
+                $Object.TwoDigitYearMax +'}'
+            )
+            ConvertTo-Json20 -InputObject $Object -Compress -Depth 1 |
+                Should -Be $comparisonString
         }
 
         It 'Compressed output is identical to the built-in ConvertTo-Json on PowerShell 3+' {
