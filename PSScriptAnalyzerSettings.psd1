@@ -3,7 +3,7 @@
 # This setting is configured in the workspace's `.vscode\settings.json`.
 #
 # For more information on PSScriptAnalyzer settings see:
-# https://github.com/PowerShell/PSScriptAnalyzer/blob/master/README.md#settings-support-in-scriptanalyzer
+# https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/using-scriptanalyzer#settings-support-in-scriptanalyzer
 #
 # You can see the predefined PSScriptAnalyzer settings here:
 # https://github.com/PowerShell/PSScriptAnalyzer/tree/master/Engine/Settings
@@ -41,55 +41,72 @@
     # You can use rule configuration to configure rules that support it:
     Rules               = @{
         PSAlignAssignmentStatement                = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/AlignAssignmentStatement.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/AlignAssignmentStatement
             Enable         = $true
             CheckHashtable = $true
         }
 
         PSAvoidLongLines                          = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/AvoidLongLines.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/AvoidLongLines
             Enable            = $true
             MaximumLineLength = 115
         }
 
+        <# PSAvoidOverwritingBuiltInCmdlets = @{
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/avoidoverwritingbuiltincmdlets
+            'PowerShellVersion' = @(
+                #'desktop-2.0-windows'
+                #'desktop-3.0-windows'
+                #'desktop-4.0-windows'
+                'desktop-5.1.14393.206-windows'
+                'core-6.1.0-windows'
+                #'core-6.1.0-linux'
+                #'core-6.1.0-macos'
+            )
+        } #>
+
+        PSAvoidSemicolonsAsLineTerminators        = @{
+            Enable = $true
+        }
+
         <# PSAvoidUsingCmdletAliases = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/AvoidUsingCmdletAliases.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/AvoidUsingCmdletAliases
             # Do not flag 'cd' alias.
             AllowList = @('cd')
         } #>
 
         PSAvoidUsingDoubleQuotesForConstantString = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/AvoidUsingDoubleQuotesForConstantString.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/AvoidUsingDoubleQuotesForConstantString
             Enable = $true
         }
 
         PSPlaceCloseBrace                         = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/PlaceCloseBrace.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/PlaceCloseBrace
             Enable            = $true
             NoEmptyLineBefore = $true
             NewLineAfter      = $false
         }
 
         PSPlaceOpenBrace                          = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/PlaceOpenBrace.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/PlaceOpenBrace
             Enable = $true
         }
 
         PSProvideCommentHelp                      = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/ProvideCommentHelp.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/ProvideCommentHelp
             Placement = 'begin'
         }
 
         # Check if your script uses cmdlets that are compatible
         PSUseCompatibleCmdlets                    = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleCmdlets.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseCompatibleCmdlets
             Compatibility = @(
                 'desktop-2.0-windows'
             )
         }
 
         PSUseCompatibleCommands                   = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleCommands.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseCompatibleCommands
             Enable         = $true
             TargetProfiles = @(
                 'win-8_x64_6.2.9200.0_3.0_x64_4.0.30319.42000_framework' # Server 2012
@@ -97,8 +114,8 @@
                 'win-8_x64_10.0.14393.0_5.1.14393.2791_x64_4.0.30319.42000_framework' # Server 2016
                 'win-8_x64_10.0.17763.0_5.1.17763.316_x64_4.0.30319.42000_framework' # Server 2019
                 'win-48_x64_10.0.17763.0_5.1.17763.316_x64_4.0.30319.42000_framework' # Win10
-                #'win-8_x64_10.0.14393.0_7.0.0_x64_3.1.2_core' # Server 2016 PS 7
-                #'win-8_x64_10.0.17763.0_7.0.0_x64_3.1.2_core' # Server 2019 PS 7
+                'win-8_x64_10.0.14393.0_7.0.0_x64_3.1.2_core' # Server 2016 PS 7
+                'win-8_x64_10.0.17763.0_7.0.0_x64_3.1.2_core' # Server 2019 PS 7
                 'win-4_x64_10.0.18362.0_7.0.0_x64_3.1.2_core' # Win10 PS 7
                 #'ubuntu_x64_18.04_7.0.0_x64_3.1.2_core'
             )
@@ -109,7 +126,7 @@
         }
 
         PSUseCompatibleSyntax                     = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleSyntax.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseCompatibleSyntax
             Enable         = $true
             TargetVersions = @(
                 '6.0'
@@ -119,7 +136,7 @@
         }
 
         PSUseCompatibleTypes                      = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseCompatibleTypes.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseCompatibleTypes
             Enable         = $true
             TargetProfiles = @(
                 'win-8_x64_6.2.9200.0_3.0_x64_4.0.30319.42000_framework' # Server 2012
@@ -139,17 +156,21 @@
         }
 
         <# PSUseConsistentIndentation = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseConsistentIndentation.md
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseConsistentIndentation
             Enable = $true
         } #>
 
         PSUseConsistentWhitespace                 = @{
-            # https://github.com/PowerShell/PSScriptAnalyzer/blob/master/RuleDocumentation/UseConsistentWhitespace.md
-            Enable                          = $true
-            CheckOperator                   = $false  # doesn't work with PSAlignAssignmentStatement enabled
-            #IgnoreAssignmentOperatorInsideHashTable = $true
-            CheckPipeForRedundantWhitespace = $true
-            CheckParameter                  = $true
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseConsistentWhitespace
+            Enable                                  = $true
+            CheckParameter                          = $true
+            CheckPipeForRedundantWhitespace         = $true
+            IgnoreAssignmentOperatorInsideHashTable = $true
+        }
+
+        PSUseCorrectCasing                        = @{
+            # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/usecorrectcasing
+            Enable = $true
         }
     }
 }
