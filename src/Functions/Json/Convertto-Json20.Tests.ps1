@@ -12,8 +12,8 @@ Import-Module 'C:\Program Files\WindowsPowerShell\Modules\Pester\4.10.1\Pester.p
 #$Host.CurrentCulture.NumberFormat.NumberDecimalSeparator = "."
 
 $MyScriptRoot = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-write-verbose -Message ('Operating from: {0}' -f $MyScriptRoot)
-. "$MyScriptRoot\ConvertTo-STJson.ps1"
+Write-Verbose -Message ('Operating from: {0}' -f $MyScriptRoot)
+. "$MyScriptRoot\ConvertTo-Json20.ps1"
 
 Describe ConvertTo-STJson {
 
@@ -36,10 +36,10 @@ Describe ConvertTo-STJson {
             ConvertTo-STJson -InputObject "1.12e-2" -Compress | Should -Be """1.12e-2"""
         }
 
-        It 'A number as a string should not be quoted if -CoerceNumberStrings is passed' {
-            ConvertTo-STJson -InputObject "1" -Compress -CoerceNumberStrings | Should -Be "1"
-            ConvertTo-STJson -InputObject "1.1" -Compress -CoerceNumberStrings | Should -Be "1.1"
-            ConvertTo-STJson -InputObject "1.12e-2" -Compress -CoerceNumberStrings | Should -Be "1.12e-2"
+        It 'A number as a string should not be quoted if -StringToNumber is passed' {
+            ConvertTo-STJson -InputObject "1KB" -Compress -StringToNumber | Should -Be '1024'
+            ConvertTo-STJson -InputObject "1.1" -Compress -StringToNumber | Should -Be '1.1'
+            ConvertTo-STJson -InputObject "1.12e-2" -Compress -StringToNumber | Should -Be '0.0112'
 
         }
 
@@ -66,7 +66,7 @@ Describe ConvertTo-STJson {
         It 'Formats datetime as ISO 8601 when you specify the switch parameter' {
             $CheckDate = [datetime]::Today
             $Object = @{ nest = @{ datetime = $CheckDate } }
-            $result = ConvertTo-STJson -InputObject $Object -Compress -DateTimeAsISO8601
+            $result = ConvertTo-STJson -InputObject $Object -Compress -DateAsIso
             Write-Verbose -Message $result
             $result | Should -Be ('{"nest":{"datetime":"' + $CheckDate.ToString('o') + '"}}')
         }
@@ -250,7 +250,7 @@ Describe ConvertTo-STJson {
 
     It 'Test for PSScriptAnalyzer warnings' {
         $AnalyzerProps = @{
-            Path = "$MyScriptRoot\ConvertTo-STJson.ps1"
+            Path = "$MyScriptRoot\ConvertTo-Json20.ps1"
             Severity = 'Warning'
             Settings = @{
                 IncludeDefaultRules = $true
