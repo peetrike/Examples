@@ -47,19 +47,29 @@ function ConvertToJsonInternal {
             [switch]
         $IsoDate,
             [switch]
-        $StringToNumber
-
+        $EnumsAsStrings
     )
 
     $NestedParams = @{
-        IsoDate        = $IsoDate
-        StringToNumber = $StringToNumber
         MaxLevel       = $MaxLevel
+        IsoDate        = $IsoDate
+        EnumsAsStrings = $EnumsAsStrings
     }
     $Keys = @()
 
     Write-Verbose -Message "Level: $Level from max $MaxLevel"
     $SpacePadding = ' ' * 4 * $Level
+
+    try {
+        $null = 1.0 + $InputObject
+        if ($InputObject.GetType().Name -like 'TimeSpan') {
+            $canBeNumber = $false
+        } else {
+            $canBeNumber = $true
+        }
+    } catch {
+        $canBeNumber = $false
+    }
 
     if ($null -eq $InputObject) {
         Write-Verbose -Message "Got 'null' as end value"
@@ -78,22 +88,18 @@ function ConvertToJsonInternal {
             )
         }
         '{0}"{1}"' -f $SpacePadding, $DateValue
-    } elseif ($InputObject -is [string]) {
-        try {
-            $null = 1.0 + $InputObject
-            $canBeConverted = $true
-        } catch {
-            $canBeConverted = $false
-        }
-        $StringValue = if ($StringToNumber -and $canBeConverted) {
-            Write-Verbose -Message 'Converting string to number'
-            $SpacePadding + (0 + $InputObject)
+    } elseif ($InputObject -is [enum]) {
+        $result = if ($EnumsAsStrings) {
+            '"{0}"' -f $InputObject
         } else {
-            Write-Verbose -Message 'Got a string as end value.'
-            '"{0}"' -f (EscapeJson -String $InputObject)
+            $InputObject.value__
         }
+        $SpacePadding + $result
+    } elseif ($InputObject -is [string]) {
+        Write-Verbose -Message 'Got a string as end value.'
+        $StringValue = '"{0}"' -f (EscapeJson -String $InputObject)
         $SpacePadding + $StringValue
-    } elseif ($InputObject -as [double]) {
+    } elseif ($InputObject -as [double] -or $canBeNumber -or 0 -eq $InputObject) {
         Write-Verbose -Message 'Got a number as end value.'
         $culture = [Globalization.CultureInfo] 'en-us'
         $SpacePadding + $InputObject.ToString($culture)
@@ -135,9 +141,9 @@ function ConvertToJsonInternal {
                     Write-Verbose -Message 'Returning Null value'
                     'null'
                 } elseif (
-                    ($Level -ge $MaxLevel) -and (
-                        @('string', 'boolean', 'datetime') -notcontains $keyValue.GetType().Name <# -or
-                        ($InputObject.$Key | Measure-Object).Count -gt 1 #>
+                    ($Level -ge $MaxLevel) -and -not (
+                        $canBeNumber -or
+                        @('string', 'boolean', 'datetime') -contains $keyValue.GetType().Name
                     )
                 ) {
                     Write-Verbose -Message 'Max level reached, returning string value'
@@ -181,11 +187,11 @@ function ConvertTo-Json20 {
         $Depth = 2,
             [switch]
         $Compress,
-            [switch]
-        $StringToNumber,
             [Alias('IsoDate')]
             [switch]
-        $DateAsIso
+        $DateAsIso,
+            [switch]
+        $EnumsAsStrings
     )
 
     begin {
@@ -203,9 +209,9 @@ function ConvertTo-Json20 {
 
     end {
         $JsonProps = @{
-            IsoDate        = $DateAsIso
-            StringToNumber = $StringToNumber
             MaxLevel       = $Depth
+            IsoDate        = $DateAsIso
+            EnumsAsStrings = $EnumsAsStrings
         }
         $JsonOutput = ConvertToJsonInternal @JsonProps -InputObject ($Collection | ForEach-Object { $_ })
 
