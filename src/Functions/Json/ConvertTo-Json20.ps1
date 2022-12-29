@@ -138,7 +138,7 @@ function ConvertToJsonInternal {
                 } elseif (
                     ($Level -ge $MaxLevel) -and -not (
                         $canBeNumber -or
-                        @('string', 'boolean', 'datetime') -contains $keyValue.GetType().Name
+                        @('string', 'boolean', 'datetime', 'enum') -contains $keyValue.GetType().Name
                     )
                 ) {
                     Write-Verbose -Message 'Max level reached, returning string value'
