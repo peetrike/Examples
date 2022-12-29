@@ -6,7 +6,10 @@ function ConvertTo-Json20 {
                 ValueFromPipeline = $true
             )]
             [object]
-        $InputObject
+        $InputObject,
+            [ValidateRange(1, 100)]
+            [int]
+        $Depth = 2
     )
 
     begin {
@@ -16,6 +19,7 @@ function ConvertTo-Json20 {
             Add-Type -AssemblyName System.Web.Extensions
             $Serializer = New-Object System.Web.Script.Serialization.Javascriptserializer
         }
+        $Serializer.RecursionLimit = $Depth
     }
 
     process {
