@@ -1,4 +1,6 @@
+#Requires -Version 3
 #Requires -Modules @{ModuleName = 'PowerShellGet'; MaximumVersion = 2.99}
+
 <#
     .SYNOPSIS
         Find local modules that have too many versions on disk
