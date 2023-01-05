@@ -1,9 +1,9 @@
 #Requires -Modules @{ModuleName = 'PowerShellGet'; MaximumVersion = 2.99}
 <#
     .SYNOPSIS
-        Find local modules that have more than 2 versions on disk
+        Find local modules that have too many versions on disk
     .DESCRIPTION
-
+        This script searches installed modules that have too many versions on disk.
 #>
 
 [CmdletBinding()]
