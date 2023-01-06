@@ -21,5 +21,5 @@ $PathName = $Scope + 'Modules'
 $ModulePath = $PSGetPath.$PathName
 
 Get-ChildItem -Path $ModulePath\* -Include * -Directory |
-    Group-Object { $_.Parent.Name } |
-    Where-Object Count -gt $VersionCount
+    Group-Object { $_.Parent.Name } -NoElement |
+    Where-Object Count -GT $VersionCount
