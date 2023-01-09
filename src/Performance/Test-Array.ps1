@@ -1,67 +1,62 @@
-﻿$Iterations = 10000
-function Measure-ScriptBlock {
-    param (
-            [int]
-        $Iterations = 10000,
-            [string]
-        $Method,
-            [scriptblock]
-        $ScriptBlock
-    )
-
-    $Type = @{
-        Name       ='Method'
-        Expression = { $Method }
-    }
-
-    1..$Iterations |
-        Measure-Command $ScriptBlock |
-        Select-Object -Property TotalMilliseconds, $Type
-}
-
-$Type = @{
-    Name       ='Type'
-    Expression = { $Array.GetType().Name }
-}
-
-#region Array (slow)
-$Array = @()
-1..$Iterations | Measure-Command {
-    $array += 'tere'
-} | Select-Object TotalMilliseconds, $Type
-#endregion
+﻿[CmdletBinding()]
+param (
+        [int]
+    $Max = 10000
+)
+Import-Module .\measure.psm1
 
 #region Array
-$Array = @()
-Measure-Command {
-    $Array = 1..$Iterations | ForEach-Object {
-        'tere'
+    Measure-ScriptBlock -Method 'Array += in a loop' -Iterations 1 -ScriptBlock {
+        $Array = @()
+        $Iterations = $Max
+        1..$Iterations | ForEach-Object {
+            $Array += 'tere'
+        }
     }
-} | Select-Object TotalMilliseconds, $Type
+#endregion
+
+#region Array assignment
+    Measure-ScriptBlock -Method 'Array assignment' -Iterations 1 -ScriptBlock {
+        $Array = @()
+        $Iterations = $Max
+        $Array = 1..$Iterations | ForEach-Object {
+            'tere'
+        }
+    }
 #endregion
 
 #region ArrayList
-$array = [Collections.ArrayList] @()
-1..$Iterations | Measure-Command {
-    [void] $Array.Add('tere')
-} | Select-Object TotalMilliseconds, $Type
+    Measure-ScriptBlock -Method 'ArrayList' -Iterations 1 -ScriptBlock {
+        $Array = [Collections.ArrayList] @()
+        $Iterations = $Max
+        1..$Iterations | ForEach-Object {
+            [void] $Array.Add('tere')
+        }
+    }
 #endregion
 
 #region Lists
-$Array = [Collections.Generic.List[string]] @()
-1..$Iterations | Measure-Command {
-    $array.Add('tere')
-} | Select-Object TotalMilliseconds, $Type
+    $Array = New-Object 'Collections.Generic.List[string]'
+    Measure-ScriptBlock -Method 'Generic list' -Iterations 1 -ScriptBlock {
+        $Array = New-Object 'Collections.Generic.List[string]'
+        $Iterations = $Max
+        1..$Iterations | ForEach-Object {
+            [void] $Array.Add('tere')
+        }
+    }
 #endregion
 
 #region Collection
-$Array = [Collections.ObjectModel.Collection[string]] @()
-1..10000 | Measure-Command {
-        $Array.Add('tere')
-} | Select-Object TotalMilliseconds, $Type
+    Measure-ScriptBlock -Method 'Generic Collection' -Iterations 1 -ScriptBlock {
+        $Array = New-Object 'Collections.ObjectModel.Collection[string]'
+        $Iterations = $Max
+        1..$Iterations | ForEach-Object {
+            [void] $Array.Add('tere')
+        }
+    }
 #endregion
 
-
+<#
 function Test-Array {
     Param(
         $Iterations  = 100000,
@@ -230,3 +225,6 @@ function Test-Collection2 {
         MemoryUsageMB  = [Math]::Round((Get-Process -Id $pid).WorkingSet / 1MB, 2)
     }
 }
+#>
+
+remove-module measure
