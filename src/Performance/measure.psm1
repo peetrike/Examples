@@ -13,7 +13,12 @@
         Expression = { $Method }
     }
 
+    $Value = @{
+        Name = 'TimeSpan'
+        Expression = { $_.ToString() }
+    }
+
     1..$Iterations |
         Measure-Command $ScriptBlock |
-        Select-Object -Property $Type, TotalMilliseconds
+        Select-Object -Property $Type, $Value, TotalMilliseconds
 }
