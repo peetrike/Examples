@@ -19,7 +19,7 @@ function ConvertTo-String {
         $SecureString
     )
 
-    $BinaryString = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString);
+    $BinaryString = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
 
     try {
         [Runtime.InteropServices.Marshal]::PtrToStringBSTR($BinaryString)
@@ -39,7 +39,7 @@ $Technique = @{
 
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     $Technique += @{
-        'cmdlet'            = {
+        'cmdlet' = {
             ConvertFrom-SecureString -AsPlainText $SecureString
         }
     }
