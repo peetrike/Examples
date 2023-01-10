@@ -14,7 +14,7 @@
     }
 
     $Value = @{
-        Name       = 'TimeSpan'
+        Name       = 'Time'
         Expression = { $_.ToString() }
     }
 
