@@ -10,16 +10,16 @@ $value1 = 'one'
 $value2 = 'two'
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
-        'values in string'    = {
+        'values in string'           = {
             $result = "this is 1: $value1 and 2: $value2"
         }
-        'concatenation'       = {
+        'concatenation'              = {
             $result = 'this is 1: ' + $value1 + ' and 2: ' + $value2
         }
-        'Single quote concat' = {
+        'Single quote concatenation' = {
             $result = 'this is 1: ' + $value1 + ' and 2: ' + $value2
         }
-        'StringBuilder'       = {
+        'StringBuilder'              = {
             $sb = [Text.StringBuilder] @{ Capacity = 26 }
             $null = $sb.Append('this is 1: ')
             $null = $sb.Append($value1)
@@ -27,10 +27,10 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
             $null = $sb.Append($value2)
             $result = $sb.ToString()
         }
-        '-f operator'         = {
+        '-f operator'                = {
             $result = 'this is 1: {0} and 2: {1}' -f $value1, $value2
         }
-        '-join operator'      = {
+        '-join operator'             = {
             $result = 'this is 1:', $value1, 'and 2:', $value2 -join ' '
         }
     } -GroupName ('{0} times' -f $iterations)
