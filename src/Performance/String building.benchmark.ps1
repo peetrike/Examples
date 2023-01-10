@@ -24,7 +24,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
                 ) -join ''
             }
             'StringBuilder' = {
-                $sb = [Text.StringBuilder] ''
+                $sb = [Text.StringBuilder] 4
                 $Iterations = $Iterations
                 1..$Iterations | ForEach-Object { [void] $sb.Append('tere') }
                 $string = $sb.ToString()
@@ -50,7 +50,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     }
 
     Measure-ScriptBlock -Method 'StringBuilder' -Iterations $Repeat -ScriptBlock {
-        $sb = [Text.StringBuilder] ''
+        $sb = [Text.StringBuilder] 4
         $Iterations = $Max
         1..$Iterations | ForEach-Object { [void] $sb.Append('tere') }
         $string = $sb.ToString()
