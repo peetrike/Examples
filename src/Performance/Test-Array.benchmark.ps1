@@ -51,49 +51,39 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
 } else {
     Import-Module .\measure.psm1
 
-    #region Array
-    Measure-ScriptBlock -Method 'Array += in a loop' -Iterations 1 -ScriptBlock {
+    Measure-ScriptBlock -Method 'Array += in a loop' -Iterations $Repeat -ScriptBlock {
         $Array = @()
         $Iterations = $Max
         1..$Iterations | ForEach-Object {
             $Array += 'tere'
         }
     }
-    #endregion
 
-    #region Array assignment
-    Measure-ScriptBlock -Method 'Array assignment' -Iterations 1 -ScriptBlock {
+    Measure-ScriptBlock -Method 'Array assignment' -Iterations $Repeat -ScriptBlock {
         $Array = @()
         $Iterations = $Max
         $Array = 1..$Iterations | ForEach-Object {
             'tere'
         }
     }
-    #endregion
 
-    #region ArrayList
-    Measure-ScriptBlock -Method 'ArrayList' -Iterations 1 -ScriptBlock {
+    Measure-ScriptBlock -Method 'ArrayList' -Iterations $Repeat -ScriptBlock {
         $Array = [Collections.ArrayList] @()
         $Iterations = $Max
         1..$Iterations | ForEach-Object {
             [void] $Array.Add('tere')
         }
     }
-    #endregion
 
-    #region Lists
-    $Array = New-Object 'Collections.Generic.List[string]'
-    Measure-ScriptBlock -Method 'Generic list' -Iterations 1 -ScriptBlock {
+    Measure-ScriptBlock -Method 'Generic list' -Iterations $Repeat -ScriptBlock {
         $Array = New-Object 'Collections.Generic.List[string]'
         $Iterations = $Max
         1..$Iterations | ForEach-Object {
             [void] $Array.Add('tere')
         }
     }
-    #endregion
 
-    #region Collection
-    Measure-ScriptBlock -Method 'Generic Collection' -Iterations 1 -ScriptBlock {
+    Measure-ScriptBlock -Method 'Generic Collection' -Iterations $Repeat -ScriptBlock {
         $Array = New-Object 'Collections.ObjectModel.Collection[string]'
         $Iterations = $Max
         1..$Iterations | ForEach-Object {
@@ -101,7 +91,5 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         }
     }
 
-    #endregion
-
-    remove-module measure
+    Remove-Module measure
 }
