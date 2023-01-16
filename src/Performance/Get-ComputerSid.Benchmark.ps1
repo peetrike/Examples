@@ -15,11 +15,26 @@ Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
-        'LocalUser'  = {
+        '.Net'          = {
+            $localMachine = [DirectoryServices.AccountManagement.ContextType]::Machine
+            $PrincipalContext = [DirectoryServices.AccountManagement.PrincipalContext] $localMachine
+            $UserPrincipal = [DirectoryServices.AccountManagement.UserPrincipal] $PrincipalContext
+            $searcher = [DirectoryServices.AccountManagement.PrincipalSearcher] $UserPrincipal
+            $searcher.FindOne().Sid.AccountDomainSid
+        }
+        'ADSI'          = {
+            $SidArray = ([adsi]"WinNT://$env:COMPUTERNAME/Administrator").ObjectSid.Value
+            ([Security.Principal.SecurityIdentifier]::new($SidArray, 0)).AccountDomainSid
+        }
+        'LocalUser'     = {
             (Get-LocalUser | select -First 1).Sid.AccountDomainSid
         }
         'Cim'           = {
             $Object = (Get-CimInstance -ClassName $ClassName -Filter $Filter)[0]
+            ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
+        }
+        'cim w/ select' = {
+            $Object = Get-CimInstance -ClassName $ClassName -Filter $Filter | Select-Object -First 1
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
         'Cim w/ Sid'    = {
@@ -27,27 +42,12 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
         'cim w/ domain' = {
-            $Object = Get-CimInstance -ClassName $ClassName -Filter $FilterDomain | select -first 1
-            ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
-        }
-        'cim w/ select' = {
-            $Object = Get-CimInstance -ClassName $ClassName -Filter $Filter | select -first 1
+            $Object = Get-CimInstance -ClassName $ClassName -Filter $FilterDomain | Select-Object -First 1
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
         'Cim w/ Props'  = {
-            $Object = Get-CimInstance -query $CimQuery | select -first 1
+            $Object = Get-CimInstance -query $CimQuery | Select-Object -First 1
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
-        'ADSI'          = {
-            $SidArray = ([adsi]"WinNT://$env:COMPUTERNAME/Administrator").ObjectSid.Value
-            ([Security.Principal.SecurityIdentifier]::new($SidArray, 0)).AccountDomainSid
-        }
-        <# '.Net'       = {
-            $localMachine = [DirectoryServices.AccountManagement.ContextType]::Machine
-            $PrincipalContext = [DirectoryServices.AccountManagement.PrincipalContext]$localMachine
-            $UserPrincipal = New-Object -TypeName 'DirectoryServices.AccountManagement.UserPrincipal' -ArgumentList $PrincipalContext
-            $searcher = New-Object -TypeName 'DirectoryServices.AccountManagement.PrincipalSearcher' -ArgumentList $UserPrincipal
-            $searcher.FindOne()
-        } #>
     } -GroupName ('Time only: {0} times' -f $iterations)
 }
