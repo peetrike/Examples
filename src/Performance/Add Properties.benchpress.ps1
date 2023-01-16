@@ -1,7 +1,7 @@
 ﻿#Requires -Version 3.0
 #Requires -Module BenchPress
 
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'list')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'result')]
 param (
     $Min = 10,
     $Max = 10000
@@ -14,11 +14,19 @@ $PercentMemory = $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemory
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $Iterations -Technique @{
         'Add-Member'    = {
+            $BaseObject = $BaseObject
+            $PercentMemory = $PercentMemory
+            $PropertyList = $PropertyList
+
             $result = $BaseObject |
                 Select-Object -Property $PropertyList |
                 Add-Member -MemberType NoteProperty -Name '%Free' -Value $PercentMemory -PassThru
         }
         'Select-Object' = {
+            $BaseObject = $BaseObject
+            $PercentMemory = $PercentMemory
+            $PropertyList = $PropertyList
+
             $PercentProperty = @{
                 Name       = '%Free'
                 Expression = { $PercentMemory }
@@ -26,6 +34,10 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
             $result = $BaseObject | Select-Object -Property ($PropertyList + $PercentProperty)
         }
         'New Object'    = {
+            $BaseObject = $BaseObject
+            $PercentMemory = $PercentMemory
+            $PropertyList = $PropertyList
+
             $ObjectProps = @{
                 '%Free' = $PercentMemory
             }
