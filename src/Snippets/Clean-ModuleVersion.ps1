@@ -38,7 +38,15 @@
     SupportsShouldProcess
 )]
 param (
+        [Parameter(
+            Position = 1
+        )]
+        [string]
+        [SupportsWildcards()]
+        # Specifies module name to search
+    $Name = '*',
         [ValidateSet('AllUsers', 'CurrentUser')]
+        [string]
     $Scope = 'AllUsers',
         [ValidateRange(1, 10)]
         [int]
@@ -49,8 +57,9 @@ param (
 $PathName = $Scope + 'Modules'
 
 $ModulePath = $PSGetPath.$PathName
+$SearchPath = Join-Path -Path $ModulePath -ChildPath $Name
 
-Get-ChildItem -Path $ModulePath\* -Include * -Directory |
+Get-ChildItem -Path $SearchPath -Include * -Directory |
     Group-Object { $_.Parent.Name } |
     Where-Object Count -GT $VersionCount |
     ForEach-Object {
