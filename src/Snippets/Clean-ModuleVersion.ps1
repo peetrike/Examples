@@ -1,6 +1,32 @@
 #Requires -Version 3
 #Requires -Modules @{ModuleName = 'PowerShellGet'; MaximumVersion = 2.99}
 
+<#PSScriptInfo
+
+    .VERSION 1.0.0
+    .GUID ae7932ba-f838-4a6b-b66e-0f30039683a3
+
+    .AUTHOR CPG4285
+    .COMPANYNAME !ZUM!
+    .COPYRIGHT (c) 2023 Peter Wawa.  All rights reserved.
+
+    .TAGS powershell module cleanup
+
+    .LICENSEURI https://opensource.org/licenses/MIT
+    .PROJECTURI https://github.com/peetrike/examples
+    .ICONURI
+
+    .EXTERNALMODULEDEPENDENCIES PowerShellGet
+    .REQUIREDSCRIPTS
+    .EXTERNALSCRIPTDEPENDENCIES
+
+    .RELEASENOTES
+        [1.0.0] - 2023.01.16 - Initial release
+
+    .PRIVATEDATA
+
+#>
+
 <#
     .SYNOPSIS
         Remove old installed module versions.
