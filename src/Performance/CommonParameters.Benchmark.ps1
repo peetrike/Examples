@@ -13,9 +13,9 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
         }
         'Internal' = {
             @(
-                  [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
-                  [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
-                  [System.Management.Automation.Internal.TransactionParameters].GetProperties().Name
+                [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
+                [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
+                [System.Management.Automation.Internal.TransactionParameters].GetProperties().Name
             )
         }
     } -GroupName ('{0} times' -f $iterations)
