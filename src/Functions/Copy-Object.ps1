@@ -13,6 +13,22 @@ param (
 
 begin {
     function Copy-Object {
+        [CmdletBinding()]
+        param (
+                [Parameter(
+                    Mandatory,
+                    ValueFromPipeline
+                )]
+            $InputObject
+        )
+
+        process {
+            $serializedObject = [Management.Automation.PSSerializer]::Serialize($InputObject)
+            [Management.Automation.PSSerializer]::Deserialize($serializedObject)
+        }
+    }
+
+    function Copy-Object2 {
         <#
             .NOTES
                 The BinaryFormatter type is dangerous and is not recommended for data processing.
@@ -42,6 +58,7 @@ begin {
             $formatter.Deserialize($memStream)
         }
     }
+
 }
 
 process {
