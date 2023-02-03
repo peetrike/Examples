@@ -7,19 +7,19 @@ param (
             Mandatory = $true,
             ValueFromPipeline = $true
         )]
-        [securestring]
+        [Security.SecureString]
     $SecureString
 )
 
 function Get-UnsecureString {
-    # [OutputType([String])]
+    [OutputType([String])]
     [CmdletBinding()]
     param (
             [parameter(
                 Mandatory = $true,
                 ValueFromPipeline = $true
             )]
-            [securestring]
+            [Security.SecureString]
         $SecureString
     )
 
