@@ -1,7 +1,7 @@
 ﻿#Requires -Module BenchPress
 
 param (
-    $Min = 10,
+    $Min = 1,
     $Max = 100
 )
 
