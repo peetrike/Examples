@@ -1,4 +1,4 @@
-#Requires -Version 3
+#Requires -Version 2
 
 [CmdletBinding(
     DefaultParameterSetName = 'ById'
@@ -10,9 +10,9 @@ param (
         [int]
     $Id,
         [Parameter(
-            Mandatory,
+            Mandatory = $true,
             ParameterSetName = 'Pipe',
-            ValueFromPipeline
+            ValueFromPipeline = $true
         )]
         [Diagnostics.Process]
     $InputObject
@@ -30,9 +30,9 @@ begin {
                 [int]
             $Id = $PID,
                 [Parameter(
-                    Mandatory,
+                    Mandatory = $true,
                     ParameterSetName = 'Pipe',
-                    ValueFromPipeline
+                    ValueFromPipeline = $true
                 )]
                 [Diagnostics.Process]
             $InputObject
@@ -41,10 +41,20 @@ begin {
         process {
             if ($InputObject) {
                 $Id = $InputObject.Id
+            } else {
+                $InputObject = Get-Process -Id $Id
             }
 
-            $Process = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$Id"
-            Get-Process -Id $Process.ParentProcessId
+            if ($InputObject.Parent) {
+                $InputObject.Parent
+            } else {
+                $Process = if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
+                    Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$Id"
+                } else {
+                    Get-WmiObject -Class Win32_Process -Filter "ProcessId=$Id"
+                }
+                Get-Process -Id $Process.ParentProcessId
+            }
         }
     }
 }
