@@ -49,7 +49,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock {
         [Diagnostics.Process]::GetProcessById($PID).Name
     }
-    Measure-ScriptBlock -Method 'cmdlet' -Iterations $Max -ScriptBlock { (Get-Process -id $PID).Name }
+    Measure-ScriptBlock -Method 'cmdlet' -Iterations $Max -ScriptBlock { (Get-Process -Id $PID).Name }
 
     Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock {
         ([wmi] "Win32_Process.Handle=$PID").Name
