@@ -11,7 +11,7 @@ param (
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique = @{
         'Get-Process' = {
-            (Get-Process -id $PID).Name
+            (Get-Process -Id $PID).Name
         }
         '.NET direct' = {
             [Diagnostics.Process]::GetProcessById($PID).Name
