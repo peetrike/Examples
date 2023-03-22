@@ -1,6 +1,7 @@
-﻿# Requires -Module BenchPress
+﻿#Requires -Version 2
+# Requires -Module BenchPress
 
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCmdLets', 'Get-CimInstance')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCommands', 'Get-WmiObject')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWMICmdlet', '')]
 [CmdletBinding()]
 param (
@@ -10,25 +11,20 @@ param (
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique = @{
-        'Get-Process' = {
-            (Get-Process -Id $PID).Name
-        }
         '.NET direct' = {
             [Diagnostics.Process]::GetProcessById($PID).Name
+        }
+        'cmdlet'      = {
+            (Get-Process -Id $PID).Name
         }
         'Accelerator' = {
             ([wmi] "Win32_Process.Handle=$PID").Name
         }
-    }
-
-    if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
-        $Technique += @{
-            'GCIM'      = {
-                (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -Property Name).Name
-            }
-            'GCIM full' = {
-                (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID").Name
-            }
+        'GCIM'        = {
+            (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -Property Name).Name
+        }
+        'GCIM full'   = {
+            (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID").Name
         }
     }
 
@@ -49,14 +45,15 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
 } else {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
+
     Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock {
         [Diagnostics.Process]::GetProcessById($PID).Name
     }
     Measure-ScriptBlock -Method 'cmdlet' -Iterations $Max -ScriptBlock { (Get-Process -id $PID).Name }
+
     Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock {
         ([wmi] "Win32_Process.Handle=$PID").Name
     }
-
     Measure-ScriptBlock -Method 'WMI' -Iterations $Max -ScriptBlock {
         (Get-WmiObject -Class Win32_Process -Filter "ProcessId = $PID" -Property Name).Name
     }
