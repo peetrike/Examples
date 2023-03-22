@@ -1,4 +1,8 @@
-﻿param (
+﻿#Requires -Version 3
+#Requires -Modules Benchpress
+
+[CmdletBinding()]
+param (
     $Min = 10,
     $Max = 10000
 )
