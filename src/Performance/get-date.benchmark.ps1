@@ -34,13 +34,13 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
-        '.Net now'            = { '{0:dd.MM.yyyy}' -f [datetime]::Now }
-        '.Net today'          = { '{0:dd.MM.yyyy}' -f [datetime]::Today }
+        '.Net now'            = { '{0:yyyy-MM-dd}' -f [datetime]::Now }
+        '.Net today'          = { '{0:yyyy-MM-dd}' -f [datetime]::Today }
         'ToString sortable'   = { [datetime]::Now.ToString('s') }
         'ToString ISO'        = { [datetime]::Now.ToString('o') }
         'cmdlet FileDateTime' = { Get-Date -Format FileDateTime }
         'cmdlet sortable'     = { Get-Date -Format s }
-        'cmdlet Unix s'       = { Get-Date -UFormat '%d.%m.%Y' }
+        'cmdlet Unix s'       = { Get-Date -UFormat '%Y.%m.%d' }
         'cmdlet Unix g'       = { Get-Date -UFormat '%x' }
     } -GroupName ('File DateTime: {0} times' -f $iterations)
 }
