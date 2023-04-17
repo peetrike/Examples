@@ -32,3 +32,5 @@ function test-asi {
 }
 
 'yks', 'kaks', 'kolm' | test-asi -Test Return | foreach { @{ Väärtus = $_} }
+'yks', 'kaks', 'kolm' | test-asi -Test Break | foreach { @{ Väärtus = $_} }
+'yks', 'kaks', 'kolm' | test-asi -Test Continue | foreach { @{ Väärtus = $_} }
