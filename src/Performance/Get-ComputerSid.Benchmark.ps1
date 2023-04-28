@@ -1,4 +1,5 @@
-﻿#Requires -Module BenchPress
+﻿#Requires -Version 3
+#Requires -Module BenchPress
 
 param (
     $Min = 1,
@@ -7,9 +8,9 @@ param (
 
 $Filter = 'LocalAccount=True'
 $FilterDomain = 'Domain="{0}"' -f $env:COMPUTERNAME
-$FilterSid = 'LocalAccount=True and Sid like "%-500"'
+$FilterSid = '{0} and Sid like "%-500"' -f $Filter
 $ClassName = 'Win32_UserAccount'
-$CimQuery = 'select Sid from Win32_UserAccount where LocalAccount=True and Sid like "%-500"'
+$CimQuery = 'select Sid from {0} where {1}' -f $ClassName, $FilterSid
 
 Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
@@ -46,8 +47,12 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
         'Cim w/ Props'  = {
-            $Object = Get-CimInstance -query $CimQuery | Select-Object -First 1
+            $Object = Get-CimInstance -query $CimQuery #| Select-Object -First 1
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
+        }
+        'Accelerator'   = {
+            $Searcher = [wmisearcher] $CimQuery
+            ([Security.Principal.SecurityIdentifier]$Searcher.Get().Sid).AccountDomainSid
         }
     } -GroupName ('Time only: {0} times' -f $iterations)
 }
