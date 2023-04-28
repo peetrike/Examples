@@ -1,4 +1,4 @@
-﻿#Requires -Module BenchPress
+﻿#Requires -Modules BenchPress
 
 param (
     $Min = 10,
