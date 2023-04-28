@@ -26,14 +26,14 @@ $WmiVersion = {
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique = @{
-        'GCIM only version' = {
-            [Version] (Get-CimInstance -ClassName Win32_OperatingSystem -Property Version).Version
-        }
-        'GCIM full'         = {
+        '.NET'          = $DotNet
+        'Accelerator'   = $Accelerator
+        'GCIM full'     = {
             [Version] (Get-CimInstance -ClassName Win32_OperatingSystem).Version
         }
-        'Accelerator'       = $Accelerator
-        '.NET'              = $DotNet
+        'GCIM specific' = {
+            [Version] (Get-CimInstance -ClassName Win32_OperatingSystem -Property Version).Version
+        }
     }
 
     if ($PSVersionTable.PSVersion.Major -le 5) {
