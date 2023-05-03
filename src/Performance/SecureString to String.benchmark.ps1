@@ -9,7 +9,7 @@ function ConvertTo-String2 {
         $SecureString
     )
 
-    [System.Net.NetworkCredential]::new('', $SecureString).Password
+    [Net.NetworkCredential]::new('', $SecureString).Password
 }
 
 function ConvertTo-String {
@@ -40,7 +40,7 @@ $Technique = @{
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     $Technique += @{
         'cmdlet' = {
-            ConvertFrom-SecureString -AsPlainText $SecureString
+            ConvertFrom-SecureString $SecureString -AsPlainText
         }
     }
 }
