@@ -2,11 +2,7 @@
 $title = 'A message'
 
 #region Load Assembly if necessary
-try {
-    $null = [Windows.Forms.MessageBoxButtons]::OK
-} catch {
-    Add-Type -AssemblyName System.Windows.Forms
-}
+Add-Type -AssemblyName System.Windows.Forms
 #endregion
 
 
@@ -55,11 +51,7 @@ $result = [Windows.Forms.MessageBox]::Show(
 
 #region Notification balloon (toast message in Windows 10)
 
-try {
-    $null = [Drawing.Icon]
-} catch {
-    Add-Type -AssemblyName System.Drawing
-}
+Add-Type -AssemblyName System.Drawing
 
 # https://docs.microsoft.com/dotnet/api/System.Windows.Forms.NotifyIcon
 $NotifyIcon = New-Object System.Windows.Forms.NotifyIcon
