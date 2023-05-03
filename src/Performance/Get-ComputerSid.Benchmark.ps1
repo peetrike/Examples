@@ -1,11 +1,10 @@
 ﻿#Requires -Version 2
 # Requires -Module BenchPress
 
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCmdlets', 'Get-LocalUser')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCommands', 'Get-LocalUser')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCommands', 'Get-WmiObject')]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleCmdlets', 'Get-CimInstance')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWMICmdlet', '')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseCompatibleTypes', '')]
 [CmdletBinding()]
 param (
     $Min = 1,
@@ -37,12 +36,12 @@ $Accelerator = {
     $Searcher = [wmisearcher] $CimQuery
     ([Security.Principal.SecurityIdentifier]$Searcher.Get().Sid).AccountDomainSid
 }
-$WmiSid = {
-    $Object = Get-WmiObject -Class $ClassName -Filter $FilterSid
+$Wmi = {
+    $Object = (Get-WmiObject -Class $ClassName -Filter $Filter)[0]
     ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
 }
-$Wmi = {
-    ($Object = Get-WmiObject -Class $ClassName -Filter $Filter)[0]
+$WmiSid = {
+    $Object = Get-WmiObject -Class $ClassName -Filter $FilterSid
     ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
 }
 
@@ -50,23 +49,23 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique = @{
         '.Net'          = $dotNet
         'ADSI'          = $Adsi
+        'Accelerator'   = $Accelerator
         'Cim'           = {
             $Object = (Get-CimInstance -ClassName $ClassName -Filter $Filter)[0]
+            ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
+        }
+        'cim w/ domain' = {
+            $Object = (Get-CimInstance -ClassName $ClassName -Filter $FilterDomain)[0]
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
         'Cim w/ Sid'    = {
             $Object = Get-CimInstance -ClassName $ClassName -Filter $FilterSid
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
-        'cim w/ domain' = {
-            $Object = Get-CimInstance -ClassName $ClassName -Filter $FilterDomain | Select-Object -First 1
-            ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
-        }
         'Cim w/ Props'  = {
-            $Object = Get-CimInstance -query $CimQuery
+            $Object = Get-CimInstance -Query $CimQuery
             ([Security.Principal.SecurityIdentifier]$Object.Sid).AccountDomainSid
         }
-        'Accelerator'   = $Accelerator
     }
 
     if (Get-Command Get-LocalUser -ErrorAction SilentlyContinue) {
@@ -83,8 +82,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         }
     }
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        $GroupName = 'Time only: {0} times' -f $iterations
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName $GroupName
+        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
     }
 } else {
     Write-Verbose -Message 'PowerShell 2'
