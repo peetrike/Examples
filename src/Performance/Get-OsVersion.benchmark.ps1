@@ -13,7 +13,6 @@ param (
 $Accelerator = {
     [Version] ([wmi] 'Win32_OperatingSystem=@').Version
 }
-
 $DotNet = {
     [System.Environment]::OSVersion.Version
 }
@@ -50,8 +49,10 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
 
-    Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock $DotNet
-    Measure-ScriptBlock -Method 'GWMI specific' -Iterations $Max -ScriptBlock $WmiVersion
-    Measure-ScriptBlock -Method 'GWMI full' -Iterations $Max -ScriptBlock $WmiFull
-    Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock $Accelerator
+   @(
+        Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock $DotNet
+        Measure-ScriptBlock -Method 'GWMI specific' -Iterations $Max -ScriptBlock $WmiVersion
+        Measure-ScriptBlock -Method 'GWMI full' -Iterations $Max -ScriptBlock $WmiFull
+        Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock $Accelerator
+    ) | Sort-Object TotalMilliseconds
 }
