@@ -37,12 +37,15 @@ begin {
             $InputObject
         )
 
+        begin {
+            $useCim = [bool] (Get-Command Get-CimInstance -ErrorAction SilentlyContinue)
+        }
+
         process {
             if ($InputObject) {
                 $Id = $InputObject.Id
             }
 
-            $useCim = [bool] (Get-Command Get-CimInstance -ErrorAction SilentlyContinue)
             if ($useCim) {
                 $Process = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$Id"
                 $Sid = $Process | Invoke-CimMethod -MethodName GetOwnerSid
