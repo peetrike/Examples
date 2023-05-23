@@ -1,9 +1,10 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-BeforeDiscovery {
-    $RuleName = 'PSUseCompatibleSyntax'
+#Requires -Version 3
+#Requires -Modules Pester
 
+BeforeDiscovery {
     $testCases = @(
         @{ Script = '$x = [MyClass]::new()'; Versions = @(3, 4) }
         @{ Script = '$member = "Hi"; $x.$member'; Versions = @() }
@@ -54,43 +55,42 @@ BeforeDiscovery {
     }
 }
 
+BeforeAll {
+    $RuleName = 'PSUseCompatibleSyntax'
+}
+
 Describe 'PSUseCompatibleSyntax' {
     It "Finds issues for PSv<TargetVersion> in '<Script>'" -TestCases $testCasesAllPSVersions {
         param([string]$Script, $Versions, $TargetVersion)
 
-        $diagnostics = Invoke-ScriptAnalyzer -ScriptDefinition $Script -IncludeRule PSUseCompatibleSyntax -Settings @{
+        $diagnostics = Invoke-ScriptAnalyzer -ScriptDefinition $Script -IncludeRule $RuleName -Settings @{
             Rules = @{ PSUseCompatibleSyntax = @{ Enable = $true; TargetVersions = @("$TargetVersion.0") } }
         }
 
-        if ($Versions -contains $TargetVersion)
-        {
+        if ($Versions -contains $TargetVersion) {
             $diagnostics.Count | Should -Be 1
-        }
-        else
-        {
+        } else {
             $diagnostics.Count | Should -Be 0
         }
     }
 
-    It "Finds incompatibilities in a script file" {
+    It 'Finds incompatibilities in a script file' {
         $settings = @{
             Rules = @{
                 PSUseCompatibleSyntax = @{
                     Enable = $true
-                    TargetVersions = @("3.0", "4.0", "5.1", "6.0")
+                    TargetVersions = @('3.0', '4.0', '5.1', '6.0')
                 }
             }
         }
+        $ScriptPath = "$PSScriptRoot/IncompatibleScript.ps1"
 
-        $diagnostics = Invoke-ScriptAnalyzer -IncludeRule PSUseCompatibleSyntax -Path "$PSScriptRoot/IncompatibleScript.ps1" -Settings $settings `
-            | Where-Object { $_.RuleName -eq 'PSUseCompatibleSyntax' }
+        $diagnostics = Invoke-ScriptAnalyzer -IncludeRule $RuleName -Path $ScriptPath -Settings $settings |
+            Where-Object RuleName -eq $RuleName
 
-        if ($PSVersionTable.PSVersion.Major -ge 5)
-        {
+        if ($PSVersionTable.PSVersion.Major -ge 5) {
             $expected = 5
-        }
-        else
-        {
+        } else {
             # PSv3/4 can't detect class/enum parts
             $expected = 4
         }
