@@ -1,22 +1,22 @@
 ﻿#Requires -Version 2
+#Requires -Modules Pester
+# Requires -Modules @{ ModuleName = 'Pester'; RequiredVersion = '4.10.1'}
 [CmdletBinding()]
 param ()
 <#
-    Pester 4.x tests for Svendsen Tech's ConvertTo-Json20. Joakim Borger Svendsen.
-    Initially created on 2017-10-21.
+    Pester tests for Svendsen Tech's ConvertTo-Json20. Joakim Borger Svendsen.
+    Converted to work with Pester 5.x
 #>
 
-Import-Module 'C:\Program Files\WindowsPowerShell\Modules\Pester\4.10.1\Pester.psd1' -Verbose:$false
 
-# Standardize the decimal separator to a period (not making it dynamic for now).
-#$Host.CurrentCulture.NumberFormat.NumberDecimalSeparator = "."
+BeforeAll {
+    # Standardize the decimal separator to a period (not making it dynamic for now).
+    #$Host.CurrentCulture.NumberFormat.NumberDecimalSeparator = "."
 
-$MyScriptRoot = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-Write-Verbose -Message ('Operating from: {0}' -f $MyScriptRoot)
-. "$MyScriptRoot\ConvertTo-Json20.ps1"
+    . $PSScriptRoot\ConvertTo-Json20.ps1
+}
 
 Describe ConvertTo-Json20 {
-
     Context 'Simple value types' {
         It 'Null and boolean values are accounted for when passed in alone' {
             ConvertTo-Json20 -InputObject $null | Should -Be "null"
@@ -30,6 +30,7 @@ Describe ConvertTo-Json20 {
             ConvertTo-Json20 -InputObject $WarningPreference -EnumsAsStrings |
                 Should -be ('"{0}"' -f $WarningPreference)
         }
+
         It 'A number value should not be quoted' {
             ConvertTo-Json20 -InputObject 1 -Compress | Should -Be "1"
             ConvertTo-Json20 -InputObject 1.1 -Compress | Should -Be "1.1"
@@ -38,8 +39,8 @@ Describe ConvertTo-Json20 {
 
         It 'A number as a string should be quoted.' {
             ConvertTo-Json20 -InputObject "1" -Compress | Should -Be '"1"'
-            ConvertTo-Json20 -InputObject "1.1" -Compress | Should -Be """1.1"""
-            ConvertTo-Json20 -InputObject "1.12e-2" -Compress | Should -Be """1.12e-2"""
+            ConvertTo-Json20 -InputObject "1.1" -Compress | Should -Be '"1.1"'
+            ConvertTo-Json20 -InputObject "1.12e-2" -Compress | Should -Be '"1.12e-2"'
         }
 
         It 'Double quotes, newlines and carriage returns are escaped within a string' {
@@ -47,7 +48,7 @@ Describe ConvertTo-Json20 {
                 Should -Be '"string with a\n newline a \r carriage return and a \"quoted\" word"'
         }
 
-        It "Double quotes, newlines and carriage returns are escaped within a string in a hashtable value" {
+        It 'Double quotes, newlines and carriage returns are escaped within a string in a hashtable value' {
             ConvertTo-Json20 -InputObject @{ Key = "string with a`n newline a `r carriage return and a `"quoted`" word" } -Compress |
                 Should -Be '{"Key":"string with a\n newline a \r carriage return and a \"quoted\" word"}'
         }
@@ -261,7 +262,7 @@ Describe ConvertTo-Json20 {
 
     It 'Test for PSScriptAnalyzer warnings' {
         $AnalyzerProps = @{
-            Path = "$MyScriptRoot\ConvertTo-Json20.ps1"
+            Path = "$PSScriptRoot\ConvertTo-Json20.ps1"
             Severity = 'Warning'
             Settings = @{
                 IncludeDefaultRules = $true
