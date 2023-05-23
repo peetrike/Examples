@@ -1,6 +1,9 @@
 ﻿
 # how to stop processing current item in pipeline without breaking whole pipeline
 
+[CmdletBinding()]
+param ()
+
 function test-asi {
     [CmdletBinding()]
     param (
@@ -21,11 +24,11 @@ function test-asi {
     process {
         if ($asi -like 'kaks') {
             write-error -Message 'Kaks pole lubatud'
-            switch ($test) {
-                'break' { break }
-                'continue' { continue }
-                'return' { return }
-            }
+            if ($test -like 'Break') {
+                break
+            } elseif ($test -like 'Continue') {
+                continue
+            } else { return }
         } else { $Asi }
         Write-Verbose -Message 'ending processing pipe'
     }
