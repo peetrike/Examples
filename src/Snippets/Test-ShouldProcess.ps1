@@ -10,8 +10,8 @@ param(
     $Force
 )
 
-$RejectAll = $false;
-$ConfirmAll = $false;
+$RejectAll = $false
+$ConfirmAll = $false
 
 foreach ($File in Get-ChildItem -File) {
     $fileName = $File.Name
