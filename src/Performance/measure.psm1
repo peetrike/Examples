@@ -17,8 +17,12 @@
         Name       = 'Time'
         Expression = { $_.ToString() }
     }
+    $Throughput = @{
+        Name       = 'Throughput'
+        Expression = { '{0:N2}/s' -f ($Iterations / $_.TotalSeconds) }
+    }
 
     1..$Iterations |
         Measure-Command $ScriptBlock |
-        Select-Object -Property $Type, $Value, TotalMilliseconds
+        Select-Object -Property $Type, $Value, $Throughput
 }
