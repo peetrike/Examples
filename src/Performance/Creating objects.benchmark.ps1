@@ -8,24 +8,24 @@ param (
     $Max = 10000
 )
 
-$cmdlet = {
-    $list = New-Object System.Collections.Generic.List[Object]
-}
-$array = {
-    $list = [Collections.Generic.List[Object]] @()
-}
-$strongType = {
-    [Collections.Generic.List[Object]] $list = @()
+$Technique = @{
+    'New-Object'              = {
+        $list = New-Object System.Collections.Generic.List[Object]
+    }
+    'casting empty array'     = {
+        $list = [Collections.Generic.List[Object]] @()
+    }
+    'strong typing'           = {
+        [Collections.Generic.List[Object]] $list = @()
+    }
 }
 
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-    $Technique = @{
-        'New-Object'              = $cmdlet
-        'casting empty array'     = $array
+    $Technique += @{
         'casting empty hashtable' = {
             $list = [Collections.Generic.List[Object]] @{}
         }
-        'strong typing'           = $strongType
     }
 
     if ($PSVersionTable.PSVersion.Major -gt 4) {
@@ -40,10 +40,10 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         Measure-Benchmark -RepeatCount $Iterations -Technique $Technique -GroupName $Iterations
     }
 } else {
-    Write-Verbose -Message ('{0} times]' -f $Max)
+    Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
 
-    Measure-ScriptBlock -Method 'New-Object' -Iterations $Max -ScriptBlock $cmdlet
-    Measure-ScriptBlock -Method 'casting empty array' -Iterations $Max -ScriptBlock $array
-    Measure-ScriptBlock -Method 'strong typing' -Iterations $Max -ScriptBlock $strongType
+    foreach ($key in $Technique.Keys) {
+        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
+    }
 }
