@@ -1,5 +1,5 @@
-﻿#Requires -Version 3.0
-#Requires -Module BenchPress
+﻿#Requires -Version 2.0
+# Requires -Module BenchPress
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'result')]
 param (
@@ -7,44 +7,61 @@ param (
     $Max = 10000
 )
 
+$newer = $PSVersionTable.PSVersion.Major -gt 2
+
 $PropertyList = 'CSName', 'TotalVisibleMemorySize', 'FreePhysicalMemory'
-$BaseObject = Get-CimInstance Win32_OperatingSystem
-$PercentMemory = $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
+$BaseObject = [wmi] 'Win32_OperatingSystem=@'
+$PercentMemory = 100* $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
 
-for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-    Measure-Benchmark -RepeatCount $Iterations -Technique @{
-        'Add-Member'    = {
-            $BaseObject = $BaseObject
-            $PercentMemory = $PercentMemory
-            $PropertyList = $PropertyList
+$Technique = @{
+    'Add-Member'    = {
+        $BaseObject = $BaseObject
+        $PercentMemory = $PercentMemory
+        $PropertyList = $PropertyList
 
-            $result = $BaseObject |
-                Select-Object -Property $PropertyList |
-                Add-Member -MemberType NoteProperty -Name '%Free' -Value $PercentMemory -PassThru
+        $result = $BaseObject |
+            Select-Object -Property $PropertyList |
+            Add-Member -MemberType NoteProperty -Name '%Free' -Value $PercentMemory -PassThru
+    }
+    'Select-Object' = {
+        $BaseObject = $BaseObject
+        $PercentMemory = $PercentMemory
+        $PropertyList = $PropertyList
+
+        $PercentProperty = @{
+            Name       = '%Free'
+            Expression = { $PercentMemory }
         }
-        'Select-Object' = {
-            $BaseObject = $BaseObject
-            $PercentMemory = $PercentMemory
-            $PropertyList = $PropertyList
+        $result = $BaseObject | Select-Object -Property ($PropertyList + $PercentProperty)
+    }
+    'New Object'    = {
+        $BaseObject = $BaseObject
+        $PercentMemory = $PercentMemory
+        $PropertyList = $PropertyList
 
-            $PercentProperty = @{
-                Name       = '%Free'
-                Expression = { $PercentMemory }
-            }
-            $result = $BaseObject | Select-Object -Property ($PropertyList + $PercentProperty)
+        $ObjectProps = @{
+            '%Free' = $PercentMemory
         }
-        'New Object'    = {
-            $BaseObject = $BaseObject
-            $PercentMemory = $PercentMemory
-            $PropertyList = $PropertyList
+        foreach ($p in $PropertyList) {
+            $ObjectProps.$p = $BaseObject.$p
+        }
+        $result = if ($newer) {
+            [pscustomobject] $ObjectProps
+        } else {
+            New-Object -TypeName psobject -Property $ObjectProps
+        }
+    }
+}
 
-            $ObjectProps = @{
-                '%Free' = $PercentMemory
-            }
-            foreach ($p in $PropertyList) {
-                $ObjectProps.$p = $BaseObject.$p
-            }
-            $result = [pscustomobject] $ObjectProps
-        }
-    } -GroupName $Iterations
+if ($newer) {
+    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+        Measure-Benchmark -RepeatCount $Iterations -Technique $Technique -GroupName $Iterations
+    }
+} else {
+    Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
+    Import-Module .\measure.psm1
+
+    foreach ($key in $Technique.Keys) {
+        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
+    }
 }
