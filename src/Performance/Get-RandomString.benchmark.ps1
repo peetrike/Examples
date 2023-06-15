@@ -103,17 +103,23 @@ function Get-RandomString {
 
 $Iterations = 1000
 
+$Technique = @{
+    'Original'  = { Get-RandomString -Length $length }
+    'NewRandom' = { Get-RandomString1 -Length $length }
+    'New'       = { Get-RandomString2 -Length $length }
+}
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     foreach ($length in 5, 10, 18, 64, 128) {
-        Measure-Benchmark -Technique @{
-            'Original'  = { Get-RandomString -Length $length }
-            'NewRandom' = { Get-RandomString1 -Length $length }
-            'New'       = { Get-RandomString2 -Length $length }
-        } -RepeatCount $Iterations -GroupName "Length $length "
+        Measure-Benchmark -Technique $Technique -RepeatCount $Iterations -GroupName "Length $length "
     }
 } else {
+    $length = 128
+    $Max = $Iterations
+    Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
-    Measure-ScriptBlock -Method 'Original' -ScriptBlock { Get-RandomString -Length 64 } -Iterations $Iterations
-    Measure-ScriptBlock -Method 'NewRandom' -ScriptBlock { Get-RandomString1 -Length 64 } -Iterations $Iterations
-    Measure-ScriptBlock -Method 'New' -ScriptBlock { Get-RandomString2 -Length 64 } -Iterations $Iterations
+
+    foreach ($t in $Technique.Keys) {
+        Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
+    }
 }
