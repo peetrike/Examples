@@ -4,6 +4,7 @@
 .AUTHOR CPG4285
 .TAGS tag1, tag2
 #>
+
 <#
 .DESCRIPTION
 This script is for demonstrating PSResourceGet module problems.
