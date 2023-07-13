@@ -6,6 +6,6 @@
 #>
 <#
 .DESCRIPTION
-just for test
+This script is for demonstrating PSResourceGet module problems.
 #>
-Write-Warning -Message 'this test has comma in tags'
+Write-Warning -Message 'this script has comma in tags'

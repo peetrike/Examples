@@ -6,7 +6,7 @@
 
 <#
 .DESCRIPTION
-just for testing
+This script is for demonstrating PSResourceGet module problems.
 #>
 
 #Requires -Modules ItkTools

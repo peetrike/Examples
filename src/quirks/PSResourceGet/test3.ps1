@@ -8,7 +8,7 @@
 
 <#
 .DESCRIPTION
-just for test
+This script is for demonstrating PSResourceGet module problems.
 #>
 
 Write-Warning -Message 'This script has comma in external module dependencies'

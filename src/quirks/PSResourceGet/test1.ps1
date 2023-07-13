@@ -5,7 +5,7 @@
 #>
 <#
     .DESCRIPTION
-        test script
+        This script is for demonstrating PSResourceGet module problems.
 #>
 
 Write-Warning -Message 'This script has problems with Find-PSResource'

@@ -12,4 +12,4 @@
         This script is for demonstrating PSResourceGet module problems.
 #>
 
-Write-warning -Message 'this script does not account ExternalModuleDependencies'
+Write-warning -Message 'this script has required module listed in ExternalModuleDependencies'
