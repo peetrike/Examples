@@ -1,0 +1,4 @@
+﻿[CmdletBinding()]
+param ()
+
+$DebugPreference
