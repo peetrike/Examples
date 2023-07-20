@@ -19,7 +19,7 @@ Measure-Benchmark -Technique @{
         $result1 = Invoke-WebRequest $licenseCsvURL -UseBasicParsing
     }
     'Rest no progress'       = {
-        $ProgressPreference = [Management.Automation.ActionPreference]::Ignore
+        $ProgressPreference = [Management.Automation.ActionPreference]::SilentlyContinue
         $result2 = Invoke-RestMethod $licenseCsvURL -UseBasicParsing
     }
     'WebRequest no progress' = {
