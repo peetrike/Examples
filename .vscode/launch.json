@@ -5,12 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PowerShell Interactive Session",
-      "type": "PowerShell",
-      "request": "launch",
-      "cwd": "${cwd}"
-    },
-    {
       "name": "PowerShell: Launch Current File",
       "type": "PowerShell",
       "request": "launch",
@@ -25,14 +19,20 @@
       "request": "launch",
       "script": "${input:ScriptFile}",
       "cwd": "${cwd}"
+    },
+    {
+      "name": "PowerShell Interactive Session",
+      "type": "PowerShell",
+      "request": "launch",
+      "cwd": "${cwd}"
     }
   ],
   "inputs": [
     {
       "id": "ScriptFile",
       "type": "promptString",
-      "default": "${workspaceFolder}/src",
-      "description": "Script file name to run"
+      "default": "${file}",
+      "description": "Enter the command line You wish to run"
     }
   ]
 }
