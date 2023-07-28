@@ -31,7 +31,7 @@
             # A message that describes what the choice is for
         $Message = 'Make a choice',
             [Parameter(Mandatory)]
-            [hashtable]
+            [Collections.IDictionary]
             # Choices in the form of hashtable.
         $Choices,
             [string]
