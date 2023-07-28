@@ -20,8 +20,10 @@
             [Parameter(Mandatory)]
             [ValidateNotNullOrEmpty()]
             [string]
+            # Specifies the text of the prompt. PowerShell appends a colon (`:`) to the text that you enter.
         $Prompt,
             [string]
+            # Specifies default value to return when user doesn't enter anything
         $Default
     )
 
