@@ -1,6 +1,20 @@
 ﻿#Requires -Version 2
 # Requires -Module BenchPress
 
+<#
+    .SYNOPSIS
+        Object creation benchmark test
+    .DESCRIPTION
+        This script measures speed of various object creation methods
+    .LINK
+        https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_object_creation
+    .LINK
+        https://learn.microsoft.com/previous-versions/powershell/module/microsoft.powershell.core/about/about_object_creation?view=powershell-3.0
+    .LINK
+        https://devblogs.microsoft.com/powershell/new-v3-language-features/
+#>
+
+
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'list')]
 [CmdletBinding()]
 param (
@@ -9,21 +23,24 @@ param (
 )
 
 $Technique = @{
-    'New-Object'              = {
+    'New-Object'          = {
         $list = New-Object System.Collections.Generic.List[Object]
     }
-    'casting empty array'     = {
+    'casting empty array' = {
         $list = [Collections.Generic.List[Object]] @()
     }
-    'strong typing'           = {
+    'strong typing'       = {
         [Collections.Generic.List[Object]] $list = @()
+    }
+    'Activator'           = {
+        $list = [Activator]::CreateInstance([Collections.Generic.List[Object]], @())
     }
 }
 
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
-        'casting empty hashtable' = {
+        'typecasting hashtable' = {
             $list = [Collections.Generic.List[Object]] @{}
         }
     }
