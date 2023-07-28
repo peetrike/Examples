@@ -1,4 +1,19 @@
 ﻿function Read-String {
+    <#
+    .SYNOPSIS
+        Read-Host with default value
+    .DESCRIPTION
+        This function asks string input from user with providing default value
+    .NOTES
+
+    .LINK
+        Read-Host
+    .EXAMPLE
+        Read-String -Prompt 'Please enter value' -Default 13
+
+        This example asks for input and returns by default provided default value
+    #>
+
     [OutputType([string])]
     [CmdletBinding()]
     param (
