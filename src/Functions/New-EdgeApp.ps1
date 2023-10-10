@@ -12,17 +12,20 @@ function New-EdgeApp {
             Creates web app in user desktop for provided web site
         .NOTES
             Originally taken from: https://www.joseespitia.com/2020/11/03/new-chromewebapp-function/
+        .LINK
+            https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/xsy6k3ys(v=vs.84)
     #>
 
     param (
             [Parameter(Mandatory)]
             [uri]
-            # Specify URL to use as app
+            # Specifies URL to use as web app
         $URL,
             [Parameter(Mandatory)]
+            [ValidateNotNullOrEmpty()]
             [Alias('Destination')]
             [string]
-            # Specify location for the shortcut
+            # Specifies location for the shortcut
         $Target,
             [Alias('System')]
             [switch]
