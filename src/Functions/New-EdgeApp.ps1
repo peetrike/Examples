@@ -16,10 +16,6 @@ function New-EdgeApp {
 
     param (
             [Parameter(Mandatory)]
-            [string]
-            # Specifies shortcut name
-        $Name,
-            [Parameter(Mandatory)]
             [uri]
             # Specify URL to use as app
         $URL,
@@ -33,14 +29,18 @@ function New-EdgeApp {
             # Specifies that -Target contains SpecialFolder reference
             # (look at https://learn.microsoft.com/dotnet/api/system.environment.specialfolder)
         $SystemFolder,
+            [ValidateNotNullOrEmpty()]
+            [string]
+            # Specifies shortcut name, if -Target points to folder
+        $Name,
             [string]
             # Specify location for shortcut icon
         $Icon,
             [switch]
             # Pass the shortcut object to pipeline
         $PassThru
-
     )
+
     # Get MSEdge.exe path
     $EdgeCommand = (Get-ItemProperty -Path HKLM:\SOFTWARE\Classes\MSEdgeHTM\shell\open\command\).'(Default)'
     if ($EdgeCommand -match '"(.*)"') { $EdgePath = $Matches.1 }
@@ -53,11 +53,15 @@ function New-EdgeApp {
                 'There is no system path called {0}' -f $Target
             )
         }
-    } else {
+    } elseif (Test-Path -Path $Target) {
         $TargetPath = (Resolve-Path -Path $Target).Path
+    } elseif (Test-Path -Path (Split-Path -Path $Target)) {
+        $TargetPath = $Target
     }
 
-    $TargetPath = Join-Path -Path $TargetPath -ChildPath ($Name + '.lnk')
+    if (Test-Path -Path $TargetPath -PathType Container) {
+        $TargetPath = Join-Path -Path $TargetPath -ChildPath ($Name + '.lnk')
+    }
 
     # Create web app shortcut
     $Shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($TargetPath)
