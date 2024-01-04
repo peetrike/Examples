@@ -14,12 +14,15 @@ function New-BrowserApp {
             New-BrowserApp -Name "web app" -URL https://peterwawa.wordpress.com -Target Desktop -SystemFolder -Browser Chrome
 
             Creates web app in user desktop for provided web site.  Use Google Chrome as browser.
+        .INPUTS
+            None
         .NOTES
             Originally taken from: https://www.joseespitia.com/2020/11/03/new-chromewebapp-function/
         .LINK
             https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/xsy6k3ys(v=vs.84)
     #>
 
+    [OutputType([void], [__ComObject])]
     param (
             [Parameter(Mandatory)]
             [uri]
