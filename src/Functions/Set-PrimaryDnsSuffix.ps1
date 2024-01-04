@@ -1,7 +1,11 @@
 ﻿function Set-PrimaryDnsSuffix {
+    <#
+        .LINK
+            https://learn.microsoft.com/windows/win32/sysinfo/computer-names
+    #>
 	param ([string] $Suffix)
 
-	# http://msdn.microsoft.com/en-us/library/ms724224(v=vs.85).aspx
+	# https://learn.microsoft.com/windows/win32/api/sysinfoapi/ne-sysinfoapi-computer_name_format
 	$ComputerNamePhysicalDnsDomain = 6
 
 	Add-Type -TypeDefinition @"
