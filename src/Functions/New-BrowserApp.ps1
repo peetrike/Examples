@@ -60,6 +60,10 @@ function New-BrowserApp {
     $BrowserRegKey = 'HKLM:\SOFTWARE\Classes\{0}\shell\open\command\' -f $BrowserKey.$Browser
     $BrowserCommand = (Get-ItemProperty -Path $BrowserRegKey).'(Default)'
     if ($BrowserCommand -match '"(.*)"') { $BrowserPath = $Matches.1 }
+
+    if (-not (Test-Path -Path $BrowserPath -PathType Leaf)) {
+        Write-Error -Message ('Chosen browser ({0}) path not found' -f $Browser) -ErrorAction Stop
+    }
     #endregion
 
     #region Determine shortcut target path
