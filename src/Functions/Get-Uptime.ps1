@@ -8,29 +8,47 @@ param (
 
 if ($PSVersionTable.PSVersion.Major -lt 6) {
     function Get-UpTime {
+        [OutputType([datetime], [timespan])]
         [CmdletBinding()]
         param (
                 [switch]
             $Since
         )
 
-        $Property = 'LastBootUpTime'
-        $Class = 'Win32_OperatingSystem'
+        if ([Diagnostics.StopWatch]::IsHighResolution) {
+            Write-Verbose -Message 'Using StopWatch'
+            $Ticks = [Diagnostics.StopWatch]::GetTimestamp()
+            $TimeSpan = if ([timespan]::TicksPerSecond -eq [Diagnostics.StopWatch]::Frequency) {
+                [timespan] $Ticks
+            } else {
+                Write-Verbose -Message 'Calculating based on seconds'
+                $seconds = $ticks / [Diagnostics.StopWatch]::Frequency
+                New-TimeSpan -Seconds $seconds
+            }
 
-        $LastBootTime = if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
-            (Get-CimInstance -ClassName $Class -Property $Property).$Property
-        } else {
-            $WmiObject = Get-WmiObject -Class $Class -Property $Property
-            #$LastBootTime = $WmiObject.ConvertToDateTime($WmiObject.LastBootUpTime)
-            [Management.ManagementDateTimeConverter]::ToDateTime($WmiObject.LastBootUpTime)
-        }
 
-        if ($Since.IsPresent) {
-            $LastBootTime
+            if ($Since) {
+                [datetime]::Now.Subtract($TimeSpan)
+            } else {
+                $TimeSpan
+            }
         } else {
-            New-TimeSpan -Start $LastBootTime
+            $Class = 'Win32_OperatingSystem'
+            Write-Verbose -Message ('Using CIM class: {0}' -f $Class)
+            $Property = 'LastBootUpTime'
+            $Class = 'Win32_OperatingSystem'
+            $Query = 'SELECT {0} FROM {1}' -f $Property, $Class
+
+            $LastBoot = ([wmisearcher] $Query).Get() | Select-Object -ExpandProperty $Property
+            $LastBootTime = [Management.ManagementDateTimeConverter]::ToDateTime($LastBoot)
+
+            if ($Since) {
+                $LastBootTime
+            } else {
+                New-TimeSpan -Start $LastBootTime
+            }
         }
-    }
+        }
 }
 
 Get-Uptime @PSBoundParameters
