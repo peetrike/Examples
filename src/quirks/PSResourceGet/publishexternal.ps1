@@ -6,11 +6,11 @@
 
 .AUTHOR CPG4285
 
-.EXTERNALMODULEDEPENDENCIES DattoRmm
+.EXTERNALMODULEDEPENDENCIES SqlServer
 
 #>
 
-#Requires -Modules DattoRMM
+#Requires -Modules SqlServer
 
 <#
 
