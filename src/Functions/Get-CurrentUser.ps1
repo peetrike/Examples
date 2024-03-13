@@ -1,4 +1,5 @@
 ﻿function Get-CurrentUser {
+    [OutputType([Security.Principal.WindowsIdentity])]
     [CmdletBinding()]
     param ()
 

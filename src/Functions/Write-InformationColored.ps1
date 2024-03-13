@@ -1,7 +1,6 @@
 ﻿#Requires -Version 5.0
-using namespace System.Management.Automation
 
-Function Write-InformationColored {
+function Write-InformationColored {
     <#
         .SYNOPSIS
             Writes messages to the information stream, optionally with
@@ -20,8 +19,9 @@ Function Write-InformationColored {
             taken from https://gist.github.com/Kieranties/90ff3b32f4645577a1f201f3092300bd
     #>
 
+    [OutputType([Management.Automation.InformationRecord])]
     [CmdletBinding()]
-    param(
+    param (
             [Parameter(Mandatory)]
             [Object]
         $MessageData,
@@ -33,12 +33,12 @@ Function Write-InformationColored {
         $NoNewline
     )
 
-    $msg = [HostInformationMessage]@{
+    $msg = [Management.Automation.HostInformationMessage] @{
         Message         = $MessageData
         ForegroundColor = $ForegroundColor
         BackgroundColor = $BackgroundColor
-        NoNewline       = $NoNewline.IsPresent
+        NoNewline       = $NoNewline
     }
 
-    Write-Information $msg
+    Write-Information -MessageData $msg
 }
