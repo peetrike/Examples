@@ -28,10 +28,11 @@ function Get-DomainSid {
         Write-Verbose -Message 'Using computer domain'
         [DirectoryServices.ActiveDirectory.Domain]::GetComputerDomain()
     } elseif ($Domain) {
+        $DomainContext = [DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
         $context = if ($Credential -ne [Management.Automation.PSCredential]::Empty) {
             Write-Verbose -Message ('Authenticating as {1} to connect to {0}' -f $Domain, $Credential.UserName)
             New-Object System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList @(
-                [DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain,
+                $DomainContext,
                 $Domain,
                 $Credential.UserName,
                 $Credential.GetNetworkCredential().Password
@@ -39,7 +40,7 @@ function Get-DomainSid {
         } else {
             Write-Verbose -Message ('Using current credentials to connect to {0}' -f $Domain)
             New-Object System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList @(
-                [DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain,
+                $DomainContext,
                 $Domain
             )
         }
@@ -49,7 +50,7 @@ function Get-DomainSid {
         [DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
     }
     New-Object -TypeName Security.Principal.SecurityIdentifier -ArgumentList (
-        $DomainObject.GetDirectoryEntry().objectSID[0],
+        $DomainObject.GetDirectoryEntry().objectSID.Value,
         0
     )
 }
