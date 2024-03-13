@@ -14,9 +14,9 @@
     }
 
     process {
-        $bytes = $from.GetBytes($Text)
-        $NewBytes = [Text.Encoding]::convert($From, $To, $bytes)
+        $bytes = $From.GetBytes($Text)
+        $NewBytes = [Text.Encoding]::Convert($From, $To, $bytes)
         Write-Verbose -Message ($NewBytes -join ' ')
-        [char[]]$NewBytes -join ''
+        [char[]] $NewBytes -join ''
     }
 }

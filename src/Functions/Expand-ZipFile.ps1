@@ -1,11 +1,11 @@
 ﻿function Expand-ZipFile {
     [CmdletBinding()]
     param (
-            [parameter(
+            [Parameter(
                 Mandatory = $true
             )]
             [ValidateScript({
-                if (Test-Path -Path $_) { $true } else {
+                if (Test-Path -Path $_ -PathType Leaf) { $true } else {
                     throw [Management.Automation.ItemNotFoundException] ('Path not found: {0}' -f $_)
                 }
             })]

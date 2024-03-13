@@ -13,7 +13,7 @@
         $to = [Text.Encoding]::Unicode
     }
     process {
-        $bytes = [byte[]]([char[]]$text)
+        $bytes = [byte[]] [char[]] $Text
         $NewBytes = [Text.Encoding]::convert($From, $to, $bytes)
         Write-Verbose -Message ($NewBytes -join ' ')
         $to.GetString($NewBytes)

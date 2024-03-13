@@ -7,9 +7,9 @@ $title = 'A message'
 $StartAppList = Get-StartApps -Name PowerShell
 
 $StartApp = if ($PSVersionTable.PSEdition -eq 'Desktop') {
-    $StartAppList | Where-Object Name -like 'Windows PowerShell'
+    $StartAppList | Where-Object Name -Like 'Windows PowerShell'
 } elseif ($PSVersionTable.PSVersion.Major -gt 5) {
-    $StartAppList | Where-Object Name -like PowerShell | Select-Object -First 1
+    $StartAppList | Where-Object Name -Like PowerShell | Select-Object -First 1
 }
 
 $AppId = $StartApp.AppId

@@ -20,7 +20,7 @@
 #>
 
 [CmdletBinding()]
-Param(
+param (
         [parameter(
             ParameterSetName = 'Version'
         )]
@@ -35,7 +35,7 @@ Param(
     $AsString
 )
 
-if ($Version.IsPresent) {
+if ($Version) {
     try {
         $VersionInfo = (Test-ScriptFileInfo -Path $PSCommandPath -ErrorAction Stop).Version
     } catch {
@@ -44,7 +44,7 @@ if ($Version.IsPresent) {
         $VersionInfo = ($result.Matches | Select-Object -ExpandProperty Groups)[1].Value
     }
 
-    if ($AsString.IsPresent) {
+    if ($AsString) {
         $VersionInfo
     } else {
         [version] $VersionInfo
