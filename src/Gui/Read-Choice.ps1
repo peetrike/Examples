@@ -9,7 +9,7 @@
             Each element's Key is used as Label and Value is used as HelpMessage.
             Label can contain character '&' to identify the next character in the label as a "hot key".
         .LINK
-            https://docs.microsoft.com/dotnet/api/system.management.automation.host.pshostuserinterface.promptforchoice
+            https://learn.microsoft.com/dotnet/api/system.management.automation.host.pshostuserinterface.promptforchoice
         .EXAMPLE
             $Choice = @{
                 '&one' = 'choice one'
@@ -48,8 +48,8 @@
     )
 
     $OptionList = foreach ($hash in $Choices.GetEnumerator()) {
-        [Management.Automation.Host.ChoiceDescription]::new(
-            $hash.Key,  # Label
+        New-Object -TypeName Management.Automation.Host.ChoiceDescription -ArgumentList @(
+            $hash.Key   # Label
             $hash.Value # HelpMessage
         )
     }

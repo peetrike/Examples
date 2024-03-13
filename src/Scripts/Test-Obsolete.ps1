@@ -10,7 +10,7 @@
 
         The warning about obsolete parameter is displayed
     .LINK
-        https://docs.microsoft.com/dotnet/api/system.obsoleteattribute
+        https://learn.microsoft.com/dotnet/api/system.obsoleteattribute
 #>
 
 [CmdletBinding()]

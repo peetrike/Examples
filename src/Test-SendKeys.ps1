@@ -7,15 +7,15 @@
         This example shows how script can emulate keyboard input and automate
         several activities that are normally done interactively
     .LINK
-        Windows Scripting Host: https://docs.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/8c6yea83(v=vs.84)
+        Windows Scripting Host: https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/8c6yea83(v=vs.84)
     .LINK
-        .NET Framework: https://docs.microsoft.com/dotnet/api/system.windows.forms.sendkeys
+        .NET Framework: https://learn.microsoft.com/dotnet/api/system.windows.forms.sendkeys
     .LINK
-        VB.Net Window activation: https://docs.microsoft.com/dotnet/api/microsoft.visualbasic.interaction.appactivate
+        VB.Net Window activation: https://learn.microsoft.com/dotnet/api/microsoft.visualbasic.interaction.appactivate
     .LINK
-        WScript.Shell window activation: https://docs.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/wzcddbek(v=vs.84)
+        WScript.Shell window activation: https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/wzcddbek(v=vs.84)
     .LINK
-        Scriptable Shell object: https://docs.microsoft.com/windows/win32/shell/shell
+        Scriptable Shell object: https://learn.microsoft.com/windows/win32/shell/shell
 #>
 
 [CmdletBinding()]

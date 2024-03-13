@@ -19,7 +19,7 @@ switch ($PSVersionTable.PSVersion.Major) {
     { $_ -ge 6 } {
         $CredentialProps.Title = $title
     }
-    Default {
+    default {
         $CredentialProps.Message = $message
     }
 }
@@ -32,7 +32,7 @@ $result.GetNetworkCredential().Password
 
 #region Powershell Prompt for Choices
 
-# https://docs.microsoft.com/dotnet/api/System.Management.Automation.Host.ChoiceDescription
+# https://learn.microsoft.com/dotnet/api/System.Management.Automation.Host.ChoiceDescription
 $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', 'Yes, do it'
 $no = New-Object System.Management.Automation.Host.ChoiceDescription '&No', 'No, leave it as it is.'
 $cancel = [Management.Automation.Host.ChoiceDescription]'&Cancel'
@@ -40,7 +40,7 @@ $cancel.HelpMessage = "Don't choose, cancel the whole thing"
 
 $options = ($yes, $no, $cancel)
 
-# https://docs.microsoft.com/dotnet/api/system.management.automation.host.pshostuserinterface.promptforchoice
+# https://learn.microsoft.com/dotnet/api/system.management.automation.host.pshostuserinterface.promptforchoice
 $result = $host.ui.PromptForChoice(
     $title,
     $message,

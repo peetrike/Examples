@@ -8,11 +8,11 @@ Add-Type -AssemblyName System.Windows.Forms
 
 #region MessageBox
 
-# https://docs.microsoft.com/dotnet/api/system.windows.forms.messagebox.show
+# https://learn.microsoft.com/dotnet/api/system.windows.forms.messagebox.show
 $result = [Windows.Forms.MessageBox]::Show($message)
 $result = [Windows.Forms.MessageBox]::Show($message, $title)
 
-# https://docs.microsoft.com/dotnet/api/system.windows.forms.messageboxbuttons
+# https://learn.microsoft.com/dotnet/api/system.windows.forms.messageboxbuttons
 [Enum]::GetValues([Windows.Forms.MessageBoxButtons])
 [Windows.Forms.MessageBoxButtons]'YesNoCancel'
 [Windows.Forms.MessageBoxButtons]::OK
@@ -24,7 +24,7 @@ $result = [Windows.Forms.MessageBox]::Show(
     $ButtonOption
 )
 
-# https://docs.microsoft.com/dotnet/api/system.windows.forms.messageboxicon
+# https://learn.microsoft.com/dotnet/api/system.windows.forms.messageboxicon
 [Enum]::GetValues([Windows.Forms.MessageBoxIcon])
 [Windows.Forms.MessageBoxIcon]'hand'
 $IconOption = [Windows.Forms.MessageBoxIcon]::Warning
@@ -35,7 +35,7 @@ $result = [Windows.Forms.MessageBox]::Show(
     $IconOption
 )
 
-# https://docs.microsoft.com/dotnet/api/system.windows.forms.messageboxdefaultbutton
+# https://learn.microsoft.com/dotnet/api/system.windows.forms.messageboxdefaultbutton
 [Enum]::GetValues([Windows.Forms.MessageBoxDefaultButton])
 [Windows.Forms.MessageBoxDefaultButton]'button3'
 $DefaultButton = [Windows.Forms.MessageBoxDefaultButton]::Button3
@@ -53,19 +53,19 @@ $result = [Windows.Forms.MessageBox]::Show(
 
 Add-Type -AssemblyName System.Drawing
 
-# https://docs.microsoft.com/dotnet/api/System.Windows.Forms.NotifyIcon
+# https://learn.microsoft.com/dotnet/api/System.Windows.Forms.NotifyIcon
 $NotifyIcon = New-Object System.Windows.Forms.NotifyIcon
 
-# https://docs.microsoft.com/dotnet/api/system.drawing.icon
+# https://learn.microsoft.com/dotnet/api/system.drawing.icon
 # $NotifyIcon.Icon = [Drawing.Icon]::new('C:\Program Files\PowerShell\7\assets\Powershell_black.ico')
-# https://docs.microsoft.com/dotnet/api/system.drawing.systemicons
+# https://learn.microsoft.com/dotnet/api/system.drawing.systemicons
 $NotifyIcon.Icon = [Drawing.SystemIcons]::Question
 
 $NotifyIcon.Text = 'A notification from script'
     # This makes system tray icon visible
 $NotifyIcon.Visible = $True
 
-# https://docs.microsoft.com/dotnet/api/system.windows.forms.tooltipicon
+# https://learn.microsoft.com/dotnet/api/system.windows.forms.tooltipicon
 # $NotifyIcon.BalloonTipIcon = [Windows.Forms.ToolTipIcon]::Info
 # $NotifyIcon.BalloonTipIcon = 'Info'
 
