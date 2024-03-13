@@ -48,12 +48,8 @@ begin {
             if ($InputObject.Parent) {
                 $InputObject.Parent
             } else {
-                $Process = if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
-                    Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$Id"
-                } else {
-                    Get-WmiObject -Class Win32_Process -Filter "ProcessId=$Id"
-                }
-                Get-Process -Id $Process.ParentProcessId
+                $Process = [wmi] "Win32_Process.Handle='$Id'"
+                [Diagnostics.Process]::GetProcessById($Process.ParentProcessId)
             }
         }
     }

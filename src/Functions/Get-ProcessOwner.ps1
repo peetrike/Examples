@@ -38,7 +38,7 @@ begin {
         )
 
         begin {
-            $useCim = [bool] (Get-Command Get-CimInstance -ErrorAction SilentlyContinue)
+            $TypeName = 'ProcessOwner'
         }
 
         process {
@@ -46,22 +46,15 @@ begin {
                 $Id = $InputObject.Id
             }
 
-            if ($useCim) {
-                $Process = Get-CimInstance -ClassName Win32_Process -Filter "ProcessId=$Id"
-                $Sid = $Process | Invoke-CimMethod -MethodName GetOwnerSid
-                $Owner = $Process | Invoke-CimMethod -MethodName GetOwner
-            } else {
-                $Process = Get-WmiObject -Class Win32_Process -Filter "ProcessId=$Id"
-                $Sid = $Process.GetOwnerSid()
-                $Owner = $Process.GetOwner()
-            }
+            $Process = [wmi] "Win32_Process.Handle=$Id"
+            $Sid = $Process.GetOwnerSid()
+            $Owner = $Process.GetOwner()
             $ResultProps = @{
                 Domain = $Owner.Domain
                 User   = $Owner.User
                 Name   = '{0}\{1}' -f $Owner.Domain, $Owner.User
                 Sid    = [Security.Principal.SecurityIdentifier] $Sid.Sid
             }
-            $TypeName = 'ProcessOwner'
             if ($useCim) {
                 $ResultProps.PSTypeName = $TypeName
                 [PSCustomObject] $ResultProps
