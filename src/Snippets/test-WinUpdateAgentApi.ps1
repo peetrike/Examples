@@ -1,14 +1,14 @@
 ﻿
-    # https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nn-wuapi-iupdatesession
+    # https://learn.microsoft.com/windows/win32/api/wuapi/nn-wuapi-iupdatesession
 $Session = New-Object -ComObject Microsoft.Update.Session
 $Searcher = $Session.CreateUpdateSearcher()
 
-    # https://docs.microsoft.com/en-us/windows/desktop/api/wuapicommon/ne-wuapicommon-tagserverselection
+    # https://learn.microsoft.com/openspecs/windows_protocols/ms-uamg/07e2bfa4-6795-4189-b007-cc50b476181a
 $Searcher.ServerSelection
 $Searcher.ServiceID
 
 
-    # https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search
+    # https://learn.microsoft.com/windows/win32/api/wuapi/nf-wuapi-iupdatesearcher-search
 $searchResult = $Searcher.Search("IsInstalled=0 and Type='Software' and IsHidden=0")
 
 $KbArticleId = @{
@@ -20,16 +20,17 @@ $searchResult.Updates | Select-Object -Property MsrcSeverity, RebootRequired, $K
 
 $HistoryCount = $Searcher.GetTotalHistoryCount()
 
-    # https://docs.microsoft.com/en-us/windows/desktop/api/Wuapi/nn-wuapi-iupdatehistoryentry
+    # https://learn.microsoft.com/windows/desktop/api/Wuapi/nn-wuapi-iupdatehistoryentry
 $LastUpdate = $Searcher.QueryHistory(0, $HistoryCount) |
-    Where-Object { ($_.Title -notmatch 'Defender') -and
+    Where-Object {
+        ($_.Title -notmatch 'Defender') -and
         ($_.ResultCode -eq 2) -and
         ($_.Operation -eq 1)
     } |
     Select-Object -First 1 -Property Date, Title, ServerSelection, ServiceId #, Operation, ResultCode
-        # https://docs.microsoft.com/en-us/windows/desktop/api/wuapicommon/ne-wuapicommon-tagserverselection
+        # https://learn.microsoft.com/previous-versions/windows/desktop/aa387280(v=vs.85)
 
-    <#     # https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/ne-wuapi-tagoperationresultcode
+    <#     # https://learn.microsoft.com/windows/win32/api/wuapi/ne-wuapi-operationresultcode
     $ResultCode = switch ($LastUpdate.ResultCode) {
         0 {'Not Started'}
         1 {'In Progress'}
@@ -38,13 +39,14 @@ $LastUpdate = $Searcher.QueryHistory(0, $HistoryCount) |
         4 {'Failed'}
         5 {'Aborted'}
     }
-        # https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/ne-wuapi-tagupdateoperation
+        # https://learn.microsoft.com/windows/win32/api/wuapi/ne-wuapi-updateoperation
     $UpdateOperation = switch ($LastUpdate.Operation) {
         1 {'Install'}
         2 {'UnInstall'}
     } #>
 
-        # https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nn-wuapi-iautomaticupdates
+        # https://learn.microsoft.com/windows/win32/api/wuapi/nn-wuapi-iautomaticupdates
+
 $AutoUpdate = New-Object -ComObject Microsoft.Update.AutoUpdate
 
 $AutoUpdate.Settings
@@ -52,8 +54,8 @@ $AutoUpdate.Results
 $AutoUpdate.ServiceEnabled
 
 
-    # https://docs.microsoft.com/windows/desktop/api/Wuapi/nn-wuapi-iupdateservicemanager
-    # https://docs.microsoft.com/windows/win32/api/wuapi/nn-wuapi-iupdateservicemanager2
+    # https://learn.microsoft.com/windows/win32/api/Wuapi/nn-wuapi-iupdateservicemanager
+    # https://learn.microsoft.com/windows/win32/api/wuapi/nn-wuapi-iupdateservicemanager2
 $ServiceManager = New-Object -ComObject Microsoft.Update.ServiceManager
 
 $ServiceManager.Services
@@ -66,12 +68,12 @@ $ServiceManager.Services | Where-Object {$_.ServiceId -eq $LastUpdate.ServiceId}
 $ServiceId = '7971f918-a847-4430-9279-4a52d1efe18d'     # Microsoft Update
 $ServiceManager.QueryServiceRegistration($ServiceId).Service.IsRegisteredWithAU
 
-    # https://docs.microsoft.com/en-us/windows/desktop/api/Wuapi/nn-wuapi-iwindowsupdateagentinfo
+    # https://learn.microsoft.com/windows/win32/api/Wuapi/nn-wuapi-iwindowsupdateagentinfo
 $AgentInfo = New-Object -ComObject Microsoft.Update.AgentInfo
 $AgentInfo.GetInfo('ProductVersionString')
 
 
-    # https://docs.microsoft.com/en-us/windows/desktop/api/Wuapi/nn-wuapi-isysteminformation
+    # https://learn.microsoft.com/windows/win32/api/wuapi/nn-wuapi-isysteminformation
 $SystemInfo = New-Object -ComObject Microsoft.Update.SystemInfo
 $SystemInfo.RebootRequired
 
