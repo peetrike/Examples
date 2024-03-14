@@ -1,4 +1,8 @@
-﻿
+﻿<#
+    .LINK
+        https://learn.microsoft.com/windows/win32/wua_sdk/portal-client
+#>
+
     # https://learn.microsoft.com/windows/win32/api/wuapi/nn-wuapi-iupdatesession
 $Session = New-Object -ComObject Microsoft.Update.Session
 $Searcher = $Session.CreateUpdateSearcher()
