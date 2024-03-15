@@ -4,9 +4,6 @@ $licenseCsvPath = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-4
 $licenseCsvName = 'Product names and service plan identifiers for licensing.csv'
 $licenseCsvURL = $licenseCsvPath, $licenseCsvName -join '/'
 
-$result1 = Invoke-WebRequest $licenseCsvURL -UseBasicParsing
-$result2 = Invoke-RestMethod $licenseCsvURL -UseBasicParsing
-
 $OldProgress = $ProgressPreference
 
 Measure-Benchmark -Technique @{
@@ -33,6 +30,9 @@ Measure-Benchmark -Technique @{
 } -RepeatCount 1
 
 $ProgressPreference = $OldProgress
+
+$result1 = Invoke-WebRequest $licenseCsvURL -UseBasicParsing
+$result2 = Invoke-RestMethod $licenseCsvURL -UseBasicParsing
 
 Measure-Benchmark -Technique @{
     'REST'       = {
