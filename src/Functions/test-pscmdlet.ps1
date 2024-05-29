@@ -35,3 +35,5 @@
     function Prompt { 'Test-PsCmdlet> ' }
     $host.EnterNestedPrompt()
 }
+
+Test-PsCmdlet

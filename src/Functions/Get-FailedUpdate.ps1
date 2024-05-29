@@ -5,7 +5,15 @@
     #>
     [CmdletBinding()]
     param (
-        $Days
+            [int]
+        $Days,
+            [int]
+        $Latest = [int]::MaxValue,
+            [switch]
+        $UpdateOnly,
+            [switch]
+        $ExcludeDefender
+
     )
 
     try {
@@ -67,12 +75,16 @@
 
     $HistoryCount = $Searcher.GetTotalHistoryCount()
 
-    $Searcher.QueryHistory(0, $HistoryCount) |
+    try {
+        $Searcher.QueryHistory(0, $HistoryCount) |
         Where-Object {
             $_.Date -gt $AfterDate -and
             $_.ResultCode -gt 2 -and      # Not successful
-            $_.Operation -eq 1
+            $_.Operation -eq 1 -and
+            (-not $ExcludeDefender -or ($ExcludeDefender -and $_.Title -notmatch 'Defender')) -and
+            (-not $UpdateOnly -or ($UpdateOnly -and $_.Title -match 'KB\d{6,7}'))
         } |
+        Select-Object -First $Latest |
         ForEach-Object {
             $Service = Get-UpdateService -ServiceId $_.ServiceId -ServiceManager $ServiceManager
             [PSCustomObject]@{
@@ -87,4 +99,7 @@
                 UnmappedResultCode = $_.UnmappedResultCode
             }
         }
+    } catch {
+        throw
+    }
 }
