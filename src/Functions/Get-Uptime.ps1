@@ -33,7 +33,6 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
                 $TimeSpan
             }
         } else {
-            $Class = 'Win32_OperatingSystem'
             Write-Verbose -Message ('Using CIM class: {0}' -f $Class)
             $Property = 'LastBootUpTime'
             $Class = 'Win32_OperatingSystem'
@@ -48,7 +47,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
                 New-TimeSpan -Start $LastBootTime
             }
         }
-        }
+    }
 }
 
 Get-Uptime @PSBoundParameters
