@@ -26,7 +26,6 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
                 New-TimeSpan -Seconds $seconds
             }
 
-
             if ($Since) {
                 [datetime]::Now.Subtract($TimeSpan)
             } else {
