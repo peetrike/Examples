@@ -10,36 +10,42 @@ param (
     $Max = 100
 )
 
-$Accelerator = {
-    [Version] ([wmi] 'Win32_OperatingSystem=@').Version
-}
-$DotNet = {
-    [System.Environment]::OSVersion.Version
-}
-$WmiFull = {
-    [Version] (Get-WmiObject -Class Win32_OperatingSystem).Version
-}
-$WmiVersion = {
-    [Version] (Get-WmiObject -Class Win32_OperatingSystem -Property Version).Version
+$ClassName = 'Win32_OperatingSystem'
+$PropertyName = 'Version'
+
+$Technique = @{
+    '.NET'       = {
+        [System.Environment]::OSVersion.Version
+    }
+    AcceleratorS = {
+        [Version] ([wmi] ('{0}=@' -f $ClassName)).$PropertyName
+    }
+    AcceleratorQ = {
+        [Version] ([wmisearcher] ('Select {1} from {0}' -f $ClassName, $PropertyName)).Get().$PropertyName
+    }
 }
 
+
+$wmiTechnique = @{
+    'GWMI full'     = {
+        [Version] (Get-WmiObject -Class $ClassName).Version
+    }
+    'GWMI specific' = {
+        [Version] (Get-WmiObject -Class $ClassName -Property $PropertyName).$PropertyName
+    }
+}
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-    $Technique = @{
-        '.NET'          = $DotNet
-        'Accelerator'   = $Accelerator
+    $Technique += @{
         'GCIM full'     = {
-            [Version] (Get-CimInstance -ClassName Win32_OperatingSystem).Version
+            [Version] (Get-CimInstance -ClassName $ClassName).$PropertyName
         }
         'GCIM specific' = {
-            [Version] (Get-CimInstance -ClassName Win32_OperatingSystem -Property Version).Version
+            [Version] (Get-CimInstance -ClassName $ClassName -Property $PropertyName).$PropertyName
         }
     }
 
     if ($PSVersionTable.PSVersion.Major -le 5) {
-        $Technique += @{
-            'GWMI full'     = $WmiFull
-            'GWMI specific' = $WmiVersion
-        }
+        $Technique += $wmiTechnique
     }
 
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
@@ -49,10 +55,10 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
 
-   @(
-        Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock $DotNet
-        Measure-ScriptBlock -Method 'GWMI specific' -Iterations $Max -ScriptBlock $WmiVersion
-        Measure-ScriptBlock -Method 'GWMI full' -Iterations $Max -ScriptBlock $WmiFull
-        Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock $Accelerator
-    ) | Sort-Object TotalMilliseconds
+    $Technique += $wmiTechnique
+    @(
+        foreach ($t in $Technique.Keys) {
+            Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
+        }
+    ) | Sort-Object Time
 }
