@@ -11,7 +11,7 @@ $newer = $PSVersionTable.PSVersion.Major -gt 2
 
 $PropertyList = 'CSName', 'TotalVisibleMemorySize', 'FreePhysicalMemory'
 $BaseObject = [wmi] 'Win32_OperatingSystem=@'
-$PercentMemory = 100* $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
+$PercentMemory = 100 * $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
 
 $Technique = @{
     'Add-Member'    = {
