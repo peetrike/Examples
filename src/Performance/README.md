@@ -12,4 +12,4 @@ to the end of script name.
 For more performance tests, look at https://github.com/StartAutomating/Benchpress/tree/master/PowerShellPerformance
 
 Scripts that run also in PowerShell 2 use module [measure.psm1](measure.psm1)
-from this directory.
+from this folder.
