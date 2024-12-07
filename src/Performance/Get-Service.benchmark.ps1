@@ -12,40 +12,56 @@ param (
 )
 
 Add-Type -AssemblyName System.ServiceProcess
-$dotNet = {
-    [ServiceProcess.ServiceController] 'bits'
+$ServiceName = 'bits'
+$Property = 'Name', 'PathName'
+
+$Technique = @{
+    dotNet       = {
+        $serviceName = $ServiceName
+        [ServiceProcess.ServiceController] $serviceName
+    }
+    Cmdlet       = {
+        $serviceName = $ServiceName
+        Get-Service $serviceName
+    }
+    AcceleratorO = {
+        $serviceName = $ServiceName
+        [wmi] "Win32_Service.Name='$serviceName'"
+    }
+    AcceleratorQ = {
+        $serviceName = $ServiceName
+        $property = $Property -join ','
+        ([wmisearcher] "Select $property From Win32_Service Where Name='$serviceName'").Get()
+    }
 }
-$Cmdlet = {
-    Get-Service 'Bits'
-}
-$Accelerator = {
-    [wmi] "Win32_Service.Name='Bits'"
-}
-$WmiFull = {
-    Get-WmiObject -Class Win32_Service -Filter "Name = 'BITS'"
-}
-$WmiSpecific = {
-    Get-WmiObject -Class Win32_Service -Filter "Name = 'BITS'" -Property Name, PathName
+
+$wmiTechnique = @{
+    WmiFull     = {
+        $serviceName = $ServiceName
+        Get-WmiObject -Class Win32_Service -Filter "Name = '$serviceName'"
+    }
+    WmiSpecific = {
+        $serviceName = $ServiceName
+        $property = $Property
+        Get-WmiObject -Class Win32_Service -Filter "Name = '$serviceName'" -Property $property
+    }
 }
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-    $Technique = @{
-        'cmdlet'      = $Cmdlet
-        '.NET'        = $dotNet
-        'Accelerator' = $Accelerator
-        'GCIM'        = {
-            Get-CimInstance -ClassName Win32_Service -Filter "Name = 'BITS'" -Property Name, PathName
+    $Technique += @{
+        CimSpecific = {
+            $serviceName = $ServiceName
+            $property = $Property
+                Get-CimInstance -ClassName Win32_Service -Filter "Name = '$serviceName'" -Property $property
         }
-        'GCIM full'   = {
-            Get-CimInstance -ClassName Win32_Service -Filter "Name = 'BITS'"
+        CimFull     = {
+            $serviceName = $ServiceName
+            Get-CimInstance -ClassName Win32_Service -Filter "Name = '$serviceName'"
         }
     }
 
     if ($PSVersionTable.PSVersion.Major -le 5) {
-        $Technique += @{
-            'GWMI'      = $WmiSpecific
-            'GWMI full' = $WmiFull
-        }
+        $Technique += $wmiTechnique
     }
 
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
@@ -55,9 +71,10 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
 
-    Measure-ScriptBlock -Method '.NET' -Iterations $Max -ScriptBlock $dotNet
-    Measure-ScriptBlock -Method 'cmdlet' -Iterations $Max -ScriptBlock $Cmdlet
-
-    Measure-ScriptBlock -Method 'Accelerator' -Iterations $Max -ScriptBlock $Accelerator
-    Measure-ScriptBlock -Method 'GWMI' -Iterations $Max -ScriptBlock $WmiSpecific
+    $Technique += $wmiTechnique
+    @(
+        foreach ($t in $Technique.Keys) {
+            Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
+        }
+    ) | Sort-Object Time
 }
