@@ -7,17 +7,17 @@
 [CmdletBinding()]
 param (
     $Min = 1,
-    $Max = 100
+    $Max = 100,
+        [switch]
+    $IncludeNetBIOS
 )
 
 $ClassName = 'Win32_ComputerSystem'
-$PropertyName = 'Name'
+$PropertyName = 'DnsHostName'
 
 $Technique = @{
-    DotNet      = { [environment]::MachineName }
-    Environment = { $env:COMPUTERNAME }
     Executable  = { hostname.exe }
-    Accelerator = {
+    AccelerateH = {
         $className = $ClassName
         $propertyName = $PropertyName
         ([wmisearcher] ('select {1} from {0}' -f $className, $propertyName)).Get().$propertyName
@@ -37,9 +37,30 @@ $wmiTechnique = @{
     }
 }
 
+if ($IncludeNetBIOS) {
+    $Technique += @{
+        Environment = { $env:COMPUTERNAME }
+        MachineName = { [Environment]::MachineName }
+        AccelerateN = {
+            $className = $ClassName
+            $propertyName = 'Name'
+            ([wmisearcher] ('select {1} from {0}' -f $className, $propertyName)).Get().$propertyName
+        }
+    }
+    $wmiTechnique += @{
+        'GWMI NetBIOS' = {
+            $className = $ClassName
+            $propertyName = 'Name'
+            (Get-WmiObject -Class $className -Property $propertyName).$propertyName
+        }
+    }
+}
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
-        FQDN        = { [Net.Dns]::GetHostEntry('').HostName }
+            # System.Net.Dns namespace does not initialize in PS 2.0 engine
+        DotNet         = { [Net.Dns]::GetHostName() }
+        FQDN           = { [Net.Dns]::GetHostEntry('').HostName }
         'CIM Full'     = {
             $className = $ClassName
             $propertyName = $PropertyName
@@ -49,6 +70,16 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
             $className = $ClassName
             $propertyName = $PropertyName
             (Get-CimInstance -ClassName $className -Property $propertyName).$propertyName
+        }
+    }
+
+    if ($IncludeNetBIOS) {
+        $Technique += @{
+            'CIM NetBIOS' = {
+                $className = $ClassName
+                $propertyName = 'Name'
+                (Get-CimInstance -ClassName $className -Property $propertyName).$propertyName
+            }
         }
     }
 
