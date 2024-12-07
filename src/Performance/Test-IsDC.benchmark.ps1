@@ -8,13 +8,15 @@ param (
 
 $Technique = @{
     'CS Specific' = {
-        ([wmisearcher] 'SELECT DomainRole FROM Win32_ComputerSystem').Get().DomainRole
+        $Property = 'DomainRole'
+        ([wmisearcher] "SELECT $Property FROM Win32_ComputerSystem").Get().$Property
     }
     'CS Generic'  = {
         ([wmisearcher] 'SELECT * FROM Win32_ComputerSystem').Get().DomainRole
     }
     'OS Specific' = {
-        ([wmisearcher] 'SELECT ProductType FROM Win32_OperatingSystem').Get().ProductType
+        $Property = 'ProductType'
+        ([wmisearcher] "SELECT $Property FROM Win32_OperatingSystem").Get().$Property
     }
     'OS Generic'  = {
         ([wmisearcher] 'SELECT * FROM Win32_OperatingSystem').Get().ProductType
