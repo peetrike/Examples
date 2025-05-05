@@ -7,11 +7,12 @@
     )
 
     $ProcessIdName = 'ProcessId'
+    $RegPathPattern = 'HKLM:\SYSTEM\CurrentControlSet\Services\{0}'
 
         # Get the service information
     foreach ($service in Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
             # get additional information from registry
-        $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\{0}" -f $service.Name
+        $regPath = $RegPathPattern -f $service.Name
         $RegInfo = Get-ItemProperty -LiteralPath $regPath -ErrorAction SilentlyContinue
 
         if ($service.Status -eq 'Running') {
