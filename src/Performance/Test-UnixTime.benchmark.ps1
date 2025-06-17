@@ -55,7 +55,7 @@ function ConvertTo-UnixTime3 {
     )
 
     begin {
-        $UnixEpoch = [datetime]'1/1/1970Z'
+        $UnixEpoch = [datetime]'1/1/1970'
     }
 
     process {
