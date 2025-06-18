@@ -1,44 +1,16 @@
 <#PSScriptInfo
+    .VERSION 1.0.0
+    .GUID 1920bc66-b969-49b7-86cc-ae966dcb2b43
+    .AUTHOR Peter Wawa
 
-.VERSION 1.0.0.0
-
-.GUID 1920bc66-b969-49b7-86cc-ae966dcb2b43
-
-.AUTHOR CPG4285
-
-.COMPANYNAME
-
-.COPYRIGHT
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES activedirectory
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-
-.PRIVATEDATA
-
-
+    .EXTERNALMODULEDEPENDENCIES activedirectory
 #>
 
 #Requires -m ActiveDirectory
 
 <#
-
-.DESCRIPTION
-problem adding module dependency
-
+    .DESCRIPTION
+        problem adding module dependency
 #>
 
 'nothing happens here'
