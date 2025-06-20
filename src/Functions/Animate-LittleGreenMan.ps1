@@ -13,6 +13,16 @@ param (
 
 function Animate-LittleGreenMan {
     param (
+            [ValidateRange(1, 300)]
+            [ValidateScript({
+                if ($_ -gt ($host.UI.RawUI.WindowSize.Width - 2)) {
+                    $Exception = New-Object System.ArgumentOutOfRangeException -ArgumentList @(
+                        'Steps'
+                        "Little green man can't step out of screen"
+                    )
+                    throw $Exception
+                } else { $true }
+            })]
             [int]
         $Steps = 31,
             [int]
@@ -21,9 +31,9 @@ function Animate-LittleGreenMan {
 
     $Head = 'O'
 
-    foreach ($Step in 0..$Steps) {
+    foreach ($Step in 2..($Steps + 2)) {
         Clear-Host
-        if ($Step % 2 -eq 0) {
+        if ($Step % 2) {
             $Arms = '↙|↘'
             $Legs = '/ \'
             $BodyPad = $Step + 1
