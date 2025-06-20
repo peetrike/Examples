@@ -18,7 +18,7 @@ function Animate-LittleGreenMan {
                 if ($_ -gt ($host.UI.RawUI.WindowSize.Width - 2)) {
                     $Exception = New-Object System.ArgumentOutOfRangeException -ArgumentList @(
                         'Steps'
-                        "Little green man can't step out of screen"
+                        '{0} steps leads little green man out of screen' -f $_
                     )
                     throw $Exception
                 } else { $true }
