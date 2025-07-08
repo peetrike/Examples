@@ -12,20 +12,20 @@ $Technique = @{
     'string +='     = {
         $string = ''
         $Iterations = $Iterations
-        1..$Iterations | ForEach-Object {
-            $string += 'tere'
+        foreach ($i in 1..$Iterations) {
+            $string += "Number $i `n"
         }
     }
     '-join'         = {
         $Iterations = $Iterations
         $string = @(
-            1..$Iterations | ForEach-Object { 'tere' }
+            foreach ($i in 1..$Iterations) { "Number $i `n" }
         ) -join ''
     }
     'StringBuilder' = {
         $sb = [Text.StringBuilder] 4
         $Iterations = $Iterations
-        1..$Iterations | ForEach-Object { [void] $sb.Append('tere') }
+        foreach ($i in 1..$Iterations) { [void] $sb.Append("Number $i `n") }
         $string = $sb.ToString()
     }
 }
