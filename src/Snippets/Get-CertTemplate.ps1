@@ -26,7 +26,7 @@ function Add-CertificateTemplateInfo {
             $template = if ($templateString -match '(Template|Mall)=([^,]+)') {
                 $matches[2].Trim()
             }
-            if ($template -match '(.+)\((.+)\)$') {
+            if ($template -match '(.+)\((\d(\.\d+)+)\)$') {
                 $Name = $Matches[1]
                 $OID = $Matches[2]
             } else {
