@@ -21,16 +21,22 @@ function Add-CertificateTemplateInfo {
         $TemplateInfo = $Certificate.Extensions | Where-Object { $_.Oid.Value -eq $TemplateOid }
 
         if ($TemplateInfo) {
-            # Parse template information
+                # Parse template information
             $templateString = $TemplateInfo.Format($false)
-            $templateName = if ($templateString -match '(Template|Mall)=([^,]+)') {
+            $template = if ($templateString -match '(Template|Mall)=([^,]+)') {
                 $matches[2].Trim()
-            } else { 'Unknown' }
-            $templateOID = if ($templateString -match 'OID=([0-9\.]+)') { $matches[1] } else { 'Unknown' }
+            }
+            if ($template -match '(.+)\((.+)\)$') {
+                $Name = $Matches[1]
+                $OID = $Matches[2]
+            } else {
+                $Name = 'unknown'
+                $Oid = $template
+            }
 
             $Certificate |
-                Add-Member -MemberType NoteProperty -Name TemplateName -Value $templateName -PassThru |
-                Add-Member -MemberType NoteProperty -Name TemplateOID -Value $templateOID -PassThru
+                Add-Member -MemberType NoteProperty -Name TemplateName -Value $Name -PassThru |
+                Add-Member -MemberType NoteProperty -Name TemplateOID -Value $OID -PassThru
         } else {
             $Certificate
         }
