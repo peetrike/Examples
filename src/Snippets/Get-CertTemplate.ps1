@@ -13,12 +13,14 @@ function Add-CertificateTemplateInfo {
     )
 
     begin {
-        $TemplateOid = '1.3.6.1.4.1.311.21.7'
+        $TemplateInfoOid = '1.3.6.1.4.1.311.21.7'
+        $LdapFilter = '(&(objectClass=pKICertificateTemplate)(msPKI-Cert-Template-OID={0}))'
+        $LdapProperty = 'displayName'
     }
 
     process {
         # Get certificate template information from extensions
-        $TemplateInfo = $Certificate.Extensions | Where-Object { $_.Oid.Value -eq $TemplateOid }
+        $TemplateInfo = $Certificate.Extensions | Where-Object { $_.Oid.Value -eq $TemplateInfoOid }
 
         if ($TemplateInfo) {
                 # Parse template information
@@ -30,8 +32,10 @@ function Add-CertificateTemplateInfo {
                 $Name = $Matches[1]
                 $OID = $Matches[2]
             } else {
-                $Name = 'unknown'
                 $Oid = $template
+                $filter = $LdapFilter -f $Oid
+                $Name = Get-AdsiObject -Context Configuration -LdapFilter $Filter -Properties $LdapProperty |
+                    Select-Object -ExpandProperty $LdapProperty
             }
 
             $Certificate |
