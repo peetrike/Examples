@@ -14,7 +14,8 @@ New-Module -Name $ModuleName -ScriptBlock {
     }
 } | Import-Module
 
-New-CommandHelp -CommandInfo (Get-Command -Module $ModuleName) |
+Get-Command -Module $ModuleName |
+    New-CommandHelp |
     Export-MarkdownCommandHelp -OutputFolder $PSScriptRoot
 
 Get-ChildItem -Path "$PSScriptRoot\$Modulename\*.md" |
