@@ -18,6 +18,6 @@ $myModule = get-module $ModuleName
 
 New-MarkdownCommandHelp -ModuleInfo $myModule -OutputFolder $PSScriptRoot
 
-Get-ChildItem -Path $PSScriptRoot\$myModule\*.md |
+Get-ChildItem -Path "$PSScriptRoot\$Modulename\*.md" |
     Import-MarkdownCommandHelp |
     Export-MamlCommandHelp -OutputFolder $PSScriptRoot
