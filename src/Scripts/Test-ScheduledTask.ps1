@@ -1,5 +1,11 @@
 ﻿[CmdletBinding()]
-param ()
+param (
+        [string]
+    $LogPath = $PSScriptRoot,
+        [ValidateRange(1, [int]::MaxValue)]
+        [int]
+    $Seconds
+)
 
 function Write-Log {
     # .EXTERNALHELP telia.common-help.xml
@@ -115,6 +121,12 @@ function Write-Log {
 }
 
 $LogName = $MyInvocation.MyCommand.Name.Replace('ps1', 'log')
-$LogFilePath = Join-Path -Path $PSScriptRoot -ChildPath $LogName
+$LogFilePath = Join-Path -Path $LogPath -ChildPath $LogName
 
-Write-Log -Message 'Scheduled task test'
+Write-Log -Message 'Scheduled task starting'
+
+if ($Seconds) {
+    Start-Sleep -Seconds $Seconds
+}
+
+Write-Log -Message 'Scheduled task stopping'
