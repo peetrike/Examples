@@ -1,0 +1,11 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"pwsh","items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"html","languageName":"HTML"},{"name":"http","languageName":"HTTP"},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"mermaid","languageName":"Mermaid"},{"name":"pwsh","languageName":"pwsh"},{"name":"value"}]}}
+
+#!markdown
+
+siin on tekst
+
+#!pwsh
+
+write-output 'siin on kood'
