@@ -8,6 +8,8 @@
             Connect-OfflineFiles -path \\server\share\path
 
             This command brings the specified Offline Files location online.
+        .LINK
+            https://learn.microsoft.com/previous-versions/windows/desktop/offlinefiles/win32-offlinefilescache-transitiononline
     #>
     [CmdletBinding()]
     param (
