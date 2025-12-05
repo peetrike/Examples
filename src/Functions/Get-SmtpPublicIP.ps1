@@ -18,7 +18,7 @@
     $writer.AutoFlush = $true
 
     # Read banner
-    <# $null = #> $reader.ReadLine()
+    $null = $reader.ReadLine()
 
     # Send EHLO command
     $writer.WriteLine('EHLO yourhostname')
