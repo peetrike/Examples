@@ -20,12 +20,13 @@
         $Path
     )
 
+    $OfflineFilesTransitionFlagInteractive = [UInt32] 1
     $invokeCimMethodSplat = @{
         ClassName  = 'Win32_OfflineFilesCache'
         MethodName = 'TransitionOnline'
         Arguments  = @{
             Path  = $Path
-            Flags = [UInt32] 1
+            Flags = $OfflineFilesTransitionFlagInteractive
         }
     }
 
