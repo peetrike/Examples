@@ -1,17 +1,128 @@
+﻿function Get-RandomString {
+    [OutputType([string])]
+    [CmdletBinding()]
+    param (
+            [ValidateRange(4, 128)]
+            [int]
+        $Length = 15,
+            [ValidatePattern('\d')]
+            [char[]]
+        $Number = ('23456789'.ToCharArray()),
+            [ValidatePattern('[a-z]')]
+            [char[]]
+        $Letter = ('abcdefghijkmnpqrstuvwxyz'.ToCharArray()),
+            [char[]]
+            [ValidatePattern('[A-Z]')]
+        $Capital = ('ABCDEFGHJKLMNPRSTUVWXYZ'.ToCharArray()),
+            [char[]]
+        $Symbol = ('!#%+@:=?*'.ToCharArray())
+    )
+
+    $table = @{
+        Capital = $Capital
+        Letter  = $Letter
+        Number  = $Number
+        Symbol  = $Symbol
+    }
+    $AllSymbol = $Number + $Letter + $Capital + $Symbol
+
+    [char[]] $everySet = foreach ($key in $table.Keys | Get-Random -Count 4) {
+        Get-Random -InputObject $table.$key
+    }
+    [char[]] $allSet = for ($i = 5; $i -le $Length; $i++) { Get-Random -InputObject $AllSymbol }
+
+    $builder = [System.Text.StringBuilder] $Length
+    [void] $builder.Append($allSet)
+    [void] $builder.Append($everySet)
+    $builder.ToString()
+}
+
 function Get-RandomString1 {
     [OutputType([string])]
-    param(
-            [ValidateScript({ $_ -gt 4 })]
+    [CmdletBinding()]
+    param (
+            [ValidateRange(4, 128)]
             [int]
-        $Length = 8,
+        $Length = 15,
             [char[]]
-        $Number = (48..57 | ForEach-Object { [char]$_ }),
+        $Number = ('23456789'.ToCharArray()),
             [char[]]
-        $Letter = (97..122 | ForEach-Object { [char]$_ }),
+        $Letter = ('abcdefghijkmnpqrstuvwxyz'.ToCharArray()),
             [char[]]
-        $Capital = (65..90 | ForEach-Object { [char]$_ }),
+        $Capital = ('ABCDEFGHJKLMNPRSTUVWXYZ'.ToCharArray()),
             [char[]]
-        $Symbol = (33, 35, 36, 37, 40, 41, 43, 45, 46, 58, 64 | ForEach-Object { [char]$_ })
+        $Symbol = ('!#%$/+@:=?*'.ToCharArray())
+    )
+
+    $table = @{
+        Capital = $Capital
+        Letter  = $Letter
+        Number  = $Number
+        Symbol  = $Symbol
+    }
+    $AllSymbol = $Number + $Letter + $Capital + $Symbol
+
+    [char[]] $everySet = foreach ($key in $table.Keys | Get-Random -Count 4) { Get-Random -InputObject $table.$key }
+    [char[]] $allSet = for ($i = 5; $i -le $Length; $i++) {
+        Get-Random -InputObject $AllSymbol
+    }
+    [int] $half = [math]::Round($allset.Count / 2)
+
+    $builder = [System.Text.StringBuilder] $Length
+    if ($half -gt 0) { [void] $builder.Append($allSet, 0, $half) }
+    [void] $builder.Append($everySet)
+    if ($length -gt 4) { [void] $builder.Append($allSet, $half, $allSet.Count - $half) }
+    $builder.ToString()
+}
+
+function Get-RandomStringArray {
+    [OutputType([string])]
+    [CmdletBinding()]
+    param (
+            [ValidateRange(4, 128)]
+            [int]
+        $Length = 15,
+            [char[]]
+        $Number = ('23456789'.ToCharArray()),
+            [char[]]
+        $Letter = ('abcdefghijkmnpqrstuvwxyz'.ToCharArray()),
+            [char[]]
+        $Capital = ('ABCDEFGHJKLMNPRSTUVWXYZ'.ToCharArray()),
+            [char[]]
+        $Symbol = ('!#%$/+@:=?*'.ToCharArray())
+    )
+
+    $table = @{
+        Capital = $Capital
+        Letter  = $Letter
+        Number  = $Number
+        Symbol  = $Symbol
+    }
+    $AllSymbol = $Number + $Letter + $Capital + $Symbol
+
+    -join @(
+        for ($i = 5; $i -le $Length; $i++) {
+            Get-Random -InputObject $AllSymbol
+        }
+        foreach ($key in $table.Keys | Get-Random -Count 4) { Get-Random -InputObject $table.$key }
+    )
+}
+
+function Get-RandomStringRandom {
+    [OutputType([string])]
+    [CmdletBinding()]
+    param (
+            [ValidateRange(4, 128)]
+            [int]
+        $Length = 15,
+            [char[]]
+        $Number = ('23456789'.ToCharArray()),
+            [char[]]
+        $Letter = ('abcdefghijkmnpqrstuvwxyz'.ToCharArray()),
+            [char[]]
+        $Capital = ('ABCDEFGHJKLMNPRSTUVWXYZ'.ToCharArray()),
+            [char[]]
+        $Symbol = ('!#%$/+@:=?*'.ToCharArray())
     )
 
     $table = @{
@@ -24,7 +135,6 @@ function Get-RandomString1 {
 
     $Array = @(
         foreach ($key in $table.Keys) { Get-Random -InputObject $table.$key }
-
         for ($i = 5; $i -le $Length; $i++) {
             Get-Random -InputObject $AllSymbol
         }
@@ -32,12 +142,11 @@ function Get-RandomString1 {
     -join $Array
 }
 
-function Get-RandomString2 {
+function Get-RandomStringOld {
     [OutputType([string])]
     param(
-            [ValidateScript({ $_ -gt 4 })]
             [int]
-        $Length = 8,
+        $Length = 15,
             [char[]]
         $Number = (48..57 | ForEach-Object { [char]$_ }),
             [char[]]
@@ -65,26 +174,19 @@ function Get-RandomString2 {
     )
 }
 
-function Get-RandomString {
-    [OutputType([string])]
+function Get-RandomStringOldest {
     param(
-            [ValidateScript({ $_ -gt 4 })]
-            [int]
-        $Length = 8,
-            [char[]]
-        $Number  = (48..57 | ForEach-Object { [char]$_ }),
-            [char[]]
-        $Letter  = (97..122 | ForEach-Object { [char]$_ }),
-            [char[]]
-        $Capital = (65..90 | ForEach-Object { [char]$_ }),
-            [char[]]
-        $Symbol  = (33, 35, 36, 37, 40, 41, 43, 45, 46, 58, 64 | ForEach-Object { [char]$_ })
+        [Int]$Length = 15,
+        $Number  = ((48..57)  | ForEach-Object {  [char]$_}),
+        $Letter  = ((97..122) | ForEach-Object {  [char]$_}),
+        $Capital = ((65..90)  | ForEach-Object {  [char]$_}),
+        $Symbol  = ((33,35,36,37,40,41,43,45,46,58,64) | ForEach-Object {  [char]$_})
     )
 
-    [String] $Password = ''
+    [String]$Password = $null
 
     $Character = $Number + $Letter + $Capital + $Symbol
-    $List = 'Number', 'Letter', 'Capital', 'Symbol' | Sort-Object { Get-Random }
+    $List = 'Number','Letter','Capital','Symbol' | Sort-Object {Get-Random}
 
     foreach ($l in $List) {
         $Value = Get-Variable $l -ValueOnly
@@ -95,8 +197,7 @@ function Get-RandomString {
 
     do {
         $Password += Get-Random -InputObject $Character
-    }
-    while ( $Password.Length -lt $Length )
+    } while ( $Password.Length -lt $Length )
 
     $Password
 }
@@ -104,13 +205,16 @@ function Get-RandomString {
 $Iterations = 1000
 
 $Technique = @{
-    'Original'  = { Get-RandomString -Length $length }
-    'NewRandom' = { Get-RandomString1 -Length $length }
-    'New'       = { Get-RandomString2 -Length $length }
+    'Current'     = { Get-RandomString -Length $length }
+    'New'         = { Get-RandomString1 -Length $length }
+    'Array'       = { Get-RandomStringArray -Length $length }
+    'Random'      = { Get-RandomStringRandom -Length $length }
+    'Oldest 2020' = { Get-RandomStringOldest -Length $length }
+    'Old 2024'    = { Get-RandomStringOld -Length $length }
 }
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-    foreach ($length in 5, 10, 18, 64, 128) {
+    foreach ($length in 4, 15, 20, 64, 128) {
         Measure-Benchmark -Technique $Technique -RepeatCount $Iterations -GroupName "Length $length "
     }
 } else {
