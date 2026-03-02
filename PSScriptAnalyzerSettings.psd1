@@ -1,4 +1,4 @@
-# Use the PowerShell extension setting `powershell.scriptAnalysis.settingsPath` to get the current workspace
+﻿# Use the PowerShell extension setting `powershell.scriptAnalysis.settingsPath` to get the current workspace
 # to use this PSScriptAnalyzerSettings.psd1 file to configure code analysis in Visual Studio Code.
 # This setting is configured in the workspace's `.vscode\settings.json`.
 #
@@ -52,18 +52,15 @@
             MaximumLineLength = 115
         }
 
-        <# PSAvoidOverwritingBuiltInCmdlets = @{
+        PSAvoidOverwritingBuiltInCmdlets = @{
             # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/avoidoverwritingbuiltincmdlets
             'PowerShellVersion' = @(
-                #'desktop-2.0-windows'
-                #'desktop-3.0-windows'
-                #'desktop-4.0-windows'
+                'desktop-2.0-windows'
+                'desktop-3.0-windows'
+                'desktop-4.0-windows'
                 'desktop-5.1.14393.206-windows'
-                'core-6.1.0-windows'
-                #'core-6.1.0-linux'
-                #'core-6.1.0-macos'
             )
-        } #>
+        }
 
         PSAvoidSemicolonsAsLineTerminators        = @{
             Enable = $true
@@ -117,7 +114,7 @@
                 'win-8_x64_10.0.14393.0_7.0.0_x64_3.1.2_core' # Server 2016 PS 7
                 'win-8_x64_10.0.17763.0_7.0.0_x64_3.1.2_core' # Server 2019 PS 7
                 'win-4_x64_10.0.18362.0_7.0.0_x64_3.1.2_core' # Win10 PS 7
-                #'ubuntu_x64_18.04_7.0.0_x64_3.1.2_core'
+                'ubuntu_x64_18.04_7.0.0_x64_3.1.2_core'
             )
             # You can specify commands to not check like this, which also will ignore its parameters:
             <# IgnoreCommands = @(
@@ -129,8 +126,9 @@
             # https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/rules/UseCompatibleSyntax
             Enable         = $true
             TargetVersions = @(
-                '6.0'
+                '7.0'
                 '5.1'
+                '4.0'
                 '3.0'
             )
         }
@@ -147,7 +145,7 @@
                 #'win-8_x64_10.0.14393.0_7.0.0_x64_3.1.2_core' # Server 2016 PS 7
                 #'win-8_x64_10.0.17763.0_7.0.0_x64_3.1.2_core' # Server 2019 PS 7
                 'win-4_x64_10.0.18362.0_7.0.0_x64_3.1.2_core' # Win10 PS 7
-                #'ubuntu_x64_18.04_7.0.0_x64_3.1.2_core'
+                'ubuntu_x64_18.04_7.0.0_x64_3.1.2_core'
             )
             # You can specify types to not check like this, which will also ignore methods and members on it:
             <# IgnoreTypes = @(
