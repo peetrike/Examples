@@ -4,7 +4,7 @@
     param (
             [ValidateRange(4, 128)]
             [int]
-        $Length = 15,
+        $Length = (Get-Random -Minimum 15 -Maximum 21),
             [ValidatePattern('\d')]
             [char[]]
         $Number = ('23456789'.ToCharArray()),
@@ -43,15 +43,18 @@ function Get-RandomString1 {
     param (
             [ValidateRange(4, 128)]
             [int]
-        $Length = 15,
+        $Length = (Get-Random -Minimum 15 -Maximum 21),
+            [ValidatePattern('\d')]
             [char[]]
         $Number = ('23456789'.ToCharArray()),
+            [ValidatePattern('[a-z]')]
             [char[]]
         $Letter = ('abcdefghijkmnpqrstuvwxyz'.ToCharArray()),
             [char[]]
+            [ValidatePattern('[A-Z]')]
         $Capital = ('ABCDEFGHJKLMNPRSTUVWXYZ'.ToCharArray()),
             [char[]]
-        $Symbol = ('!#%$/+@:=?*'.ToCharArray())
+        $Symbol = ('!#%+@:=?*'.ToCharArray())
     )
 
     $table = @{
@@ -66,12 +69,13 @@ function Get-RandomString1 {
     [char[]] $allSet = for ($i = 5; $i -le $Length; $i++) {
         Get-Random -InputObject $AllSymbol
     }
-    [int] $half = [math]::Round($allset.Count / 2)
+    $full = $Length - 4
+    $half = if ($full) { Get-Random -Maximum $full } else { 0 }
 
     $builder = [System.Text.StringBuilder] $Length
     if ($half -gt 0) { [void] $builder.Append($allSet, 0, $half) }
     [void] $builder.Append($everySet)
-    if ($length -gt 4) { [void] $builder.Append($allSet, $half, $allSet.Count - $half) }
+    if ($length -gt 4) { [void] $builder.Append($allSet, $half, $full - $half) }
     $builder.ToString()
 }
 
@@ -205,20 +209,20 @@ function Get-RandomStringOldest {
 $Iterations = 1000
 
 $Technique = @{
-    'Current'     = { Get-RandomString -Length $length }
-    'New'         = { Get-RandomString1 -Length $length }
-    'Array'       = { Get-RandomStringArray -Length $length }
-    'Random'      = { Get-RandomStringRandom -Length $length }
-    'Oldest 2020' = { Get-RandomStringOldest -Length $length }
-    'Old 2024'    = { Get-RandomStringOld -Length $length }
+    'StringBuilder' = { Get-RandomString -Length $length }
+    'RandomBuilder' = { Get-RandomString1 -Length $length }
+    'Array'         = { Get-RandomStringArray -Length $length }
+    'RandomArray'   = { Get-RandomStringRandom -Length $length }
+    'Oldest 2020'   = { Get-RandomStringOldest -Length $length }
+    'Old 2024'      = { Get-RandomStringOld -Length $length }
 }
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-    foreach ($length in 4, 15, 20, 64, 128) {
+    foreach ($length in 5, 15, 20, 64, 128) {
         Measure-Benchmark -Technique $Technique -RepeatCount $Iterations -GroupName "Length $length "
     }
 } else {
-    $length = 128
+    $length = 64
     $Max = $Iterations
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
