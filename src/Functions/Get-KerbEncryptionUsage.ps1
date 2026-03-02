@@ -14,8 +14,8 @@
     )
 
     enum RequestType {
-        AS
-        TGS
+        TicketGrantingTicket
+        ServiceTicket
     }
     enum EncryptionType {
         DesCrc = 0x1
