@@ -54,7 +54,8 @@
             TimeCreated       = $_.TimeCreated
             EventId           = $_.Id
             RequestType       = [RequestType] [int] ($_.id -eq 4769)
-            Target            = $EventXml.SelectSingleNode('//*[@Name = "ServiceName"]').InnerText
+            TargetService     = $EventXml.SelectSingleNode('//*[@Name = "ServiceName"]').InnerText
+            UserName          = $EventXml.SelectSingleNode('//*[@Name = "TargetUserName"]').InnerText
             IPAddress         = $EventXml.SelectSingleNode('//*[@Name = "IpAddress"]').InnerText
             TicketEncryption  = $ticketEncryption
             SessionEncryption = [EncryptionType] [int] $EventXml.SelectSingleNode(
