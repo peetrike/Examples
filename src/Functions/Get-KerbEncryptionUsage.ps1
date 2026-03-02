@@ -1,4 +1,5 @@
-﻿function Get-KerbEncryptionUsage {
+﻿#Requires -Version 5.0
+function Get-KerbEncryptionUsage {
     [CmdletBinding()]
     param (
             [ValidateSet('RC4', 'DES', 'AES-SHA1', 'AES-SHA2', 'All')]
