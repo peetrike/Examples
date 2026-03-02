@@ -79,7 +79,7 @@ Describe 'PSUseCompatibleSyntax' {
             Rules = @{
                 PSUseCompatibleSyntax = @{
                     Enable = $true
-                    TargetVersions = @('3.0', '4.0', '5.1', '6.0')
+                    TargetVersions = @('3.0', '4.0', '5.1', '7.0')
                 }
             }
         }
