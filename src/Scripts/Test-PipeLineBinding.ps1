@@ -12,7 +12,7 @@ begin {
 }
 
 <# process {
-        # You can't have process block when You excpect $input to contain values in end block
+        # You can't have process block when You expect $input to contain values in end block
     Write-Verbose -Message ('Processing input')
     #$InputObject
 } #>
