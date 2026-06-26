@@ -1,0 +1,75 @@
+{
+  "verso": "1.0",
+  "metadata": {
+    "defaultKernel": "powershell",
+    "activeLayout": "notebook"
+  },
+  "cells": [
+    {
+      "id": "06f012f0-ec1a-4522-8025-f641048aca57",
+      "type": "markdown",
+      "source": "# Polyglot ja PowerShell\n\nkatsetame siin asju",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch1 id=\u0022polyglot-ja-powershell\u0022\u003EPolyglot ja PowerShell\u003C/h1\u003E\n\u003Cp\u003Ekatsetame siin asju\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "84f66022-c208-427a-928a-4178dbbbbf4f",
+      "type": "code",
+      "language": "powershell",
+      "source": "Write-Output \u0027tere\u0027",
+      "outputs": [
+        {
+          "mimeType": "text/plain",
+          "content": "tere"
+        }
+      ]
+    },
+    {
+      "id": "86d30c6a-4187-466b-9bd2-984d373182a3",
+      "type": "markdown",
+      "source": "veel natuke asju",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Cp\u003Eveel natuke asju\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "e1ff3ffd-e9b4-42c6-bf93-7e1854667a3d",
+      "type": "code",
+      "language": "powershell",
+      "source": "Test-NetConnection kapp.estpak.ee -port 443 | Out-Host",
+      "outputs": [
+        {
+          "mimeType": "text/plain",
+          "content": "ComputerName     : kapp.estpak.ee"
+        },
+        {
+          "mimeType": "text/plain",
+          "content": "RemoteAddress    : 213.180.29.35"
+        },
+        {
+          "mimeType": "text/plain",
+          "content": "RemotePort       : 443"
+        },
+        {
+          "mimeType": "text/plain",
+          "content": "InterfaceAlias   : Wi-Fi"
+        },
+        {
+          "mimeType": "text/plain",
+          "content": "SourceAddress    : 10.65.56.22"
+        },
+        {
+          "mimeType": "text/plain",
+          "content": "TcpTestSucceeded : True"
+        }
+      ]
+    }
+  ]
+}
