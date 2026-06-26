@@ -8,11 +8,11 @@
     {
       "id": "06f012f0-ec1a-4522-8025-f641048aca57",
       "type": "markdown",
-      "source": "# Polyglot ja PowerShell\n\nkatsetame siin asju",
+      "source": "# Verso ja PowerShell\n\n[Verso](https://versonotebooks.com/)\n\nkatsetame siin asju",
       "outputs": [
         {
           "mimeType": "text/html",
-          "content": "\u003Ch1 id=\u0022polyglot-ja-powershell\u0022\u003EPolyglot ja PowerShell\u003C/h1\u003E\n\u003Cp\u003Ekatsetame siin asju\u003C/p\u003E\n"
+          "content": "\u003Ch1 id=\u0022verso-ja-powershell\u0022\u003EVerso ja PowerShell\u003C/h1\u003E\n\u003Cp\u003E\u003Ca href=\u0022https://versonotebooks.com/\u0022\u003Ehttps://versonotebooks.com/\u003C/a\u003E\u003C/p\u003E\n\u003Cp\u003Ekatsetame siin asju\u003C/p\u003E\n"
         }
       ]
     },
