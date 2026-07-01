@@ -1,0 +1,233 @@
+{
+  "verso": "1.0",
+  "metadata": {
+    "title": "Exploring PowerShell with Verso",
+    "created": "2026-03-04T20:00:00+00:00",
+    "modified": "2026-03-04T20:00:00+00:00",
+    "defaultKernel": "powershell",
+    "activeLayout": "notebook",
+    "preferredTheme": "verso-light"
+  },
+  "cells": [
+    {
+      "id": "ba96ee75-6d3a-4f81-a4fa-5c12b86f64db",
+      "type": "markdown",
+      "source": "# Exploring PowerShell with Verso\n\nVerso supports PowerShell as a language kernel. This notebook walks through PowerShell fundamentals \u2014 variables, pipelines, hashtables, custom objects, functions, and error handling \u2014 all running interactively with shared state across cells.\n\nEvery variable you define persists for the rest of the session, just like in a PowerShell console.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch1 id=\u0022exploring-powershell-with-verso\u0022\u003EExploring PowerShell with Verso\u003C/h1\u003E\n\u003Cp\u003EVerso supports PowerShell as a language kernel. This notebook walks through PowerShell fundamentals \u2014 variables, pipelines, hashtables, custom objects, functions, and error handling \u2014 all running interactively with shared state across cells.\u003C/p\u003E\n\u003Cp\u003EEvery variable you define persists for the rest of the session, just like in a PowerShell console.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "661837d6-9827-4547-9e0d-2d5eeab71ad1",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Define sample data as custom objects\n$cities = @(\n    [PSCustomObject]@{ Name = \u0027Tokyo\u0027;     Country = \u0027Japan\u0027;     Population = 13960000; Area = 2194.0 }\n    [PSCustomObject]@{ Name = \u0027London\u0027;    Country = \u0027UK\u0027;        Population = 8982000;  Area = 1572.0 }\n    [PSCustomObject]@{ Name = \u0027New York\u0027;  Country = \u0027USA\u0027;       Population = 8336000;  Area = 783.0 }\n    [PSCustomObject]@{ Name = \u0027Paris\u0027;     Country = \u0027France\u0027;    Population = 2161000;  Area = 105.0 }\n    [PSCustomObject]@{ Name = \u0027Singapore\u0027; Country = \u0027Singapore\u0027; Population = 5454000;  Area = 733.0 }\n    [PSCustomObject]@{ Name = \u0027Sydney\u0027;    Country = \u0027Australia\u0027; Population = 5312000;  Area = 12368.0 }\n    [PSCustomObject]@{ Name = \u0027Toronto\u0027;   Country = \u0027Canada\u0027;    Population = 2794000;  Area = 630.0 }\n    [PSCustomObject]@{ Name = \u0027Berlin\u0027;    Country = \u0027Germany\u0027;   Population = 3645000;  Area = 892.0 }\n)\n\nWrite-Host \u0022Loaded $($cities.Count) cities\u0022"
+    },
+    {
+      "id": "d397b6bf-552d-45cd-b021-3432183a4481",
+      "type": "markdown",
+      "source": "## The Pipeline\n\nPowerShell\u0027s pipeline (\u0060|\u0060) streams objects between commands. Each object retains its properties \u2014 no text parsing needed. The \u0060$cities\u0060 array from the previous cell is still in scope.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022the-pipeline\u0022\u003EThe Pipeline\u003C/h2\u003E\n\u003Cp\u003EPowerShell\u0027s pipeline (\u003Ccode\u003E|\u003C/code\u003E) streams objects between commands. Each object retains its properties \u2014 no text parsing needed. The \u003Ccode\u003E$cities\u003C/code\u003E array from the previous cell is still in scope.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "9b76b8ca-6d2a-464e-bdd9-392911483269",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Compute population density and rank cities\n$ranked = $cities | ForEach-Object {\n    [PSCustomObject]@{\n        Name    = $_.Name\n        Country = $_.Country\n        Density = [math]::Round($_.Population / $_.Area, 0)\n    }\n} | Sort-Object Density -Descending\n\n$ranked | Format-Table -AutoSize"
+    },
+    {
+      "id": "1f656ebc-c37d-4224-8c04-f40a530c1583",
+      "type": "markdown",
+      "source": "## Hashtables and Type Conversion\n\nPowerShell hashtables (\u0060@{}\u0060) are flexible dictionaries. When published to Verso\u0027s variable store, they are automatically converted to \u0060Dictionary\u003Cstring, object\u003E\u0060 for cross-kernel compatibility.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022hashtables-and-type-conversion\u0022\u003EHashtables and Type Conversion\u003C/h2\u003E\n\u003Cp\u003EPowerShell hashtables (\u003Ccode\u003E@{}\u003C/code\u003E) are flexible dictionaries. When published to Verso\u0027s variable store, they are automatically converted to \u003Ccode\u003EDictionary\u0026lt;string, object\u0026gt;\u003C/code\u003E for cross-kernel compatibility.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "e36f31c0-04eb-47fc-84f4-8964749c6c27",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Build a lookup table: city name -\u003E population\n$populationLookup = @{}\nforeach ($city in $cities) {\n    $populationLookup[$city.Name] = $city.Population\n}\n\n# Quick lookups\nWrite-Output \u0022Tokyo population: $($populationLookup[\u0027Tokyo\u0027])\u0022\nWrite-Output \u0022Paris population: $($populationLookup[\u0027Paris\u0027])\u0022\nWrite-Output \u0022Total entries: $($populationLookup.Count)\u0022"
+    },
+    {
+      "id": "e7c09d09-5c2b-4ade-b11f-8072a9bae16b",
+      "type": "markdown",
+      "source": "## Functions and Filtering\n\nDefine reusable functions that persist across cells. PowerShell\u0027s \u0060Where-Object\u0060 and comparison operators make filtering intuitive.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022functions-and-filtering\u0022\u003EFunctions and Filtering\u003C/h2\u003E\n\u003Cp\u003EDefine reusable functions that persist across cells. PowerShell\u0027s \u003Ccode\u003EWhere-Object\u003C/code\u003E and comparison operators make filtering intuitive.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "9c549dfb-b360-4cfd-acb7-63c8f36f9727",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Define a classification function\nfunction Get-DensityTier {\n    param([int]$Density)\n    switch ($Density) {\n        { $_ -gt 10000 } { \u0027Ultra-dense\u0027; break }\n        { $_ -gt 5000 }  { \u0027Dense\u0027; break }\n        { $_ -gt 1000 }  { \u0027Moderate\u0027; break }\n        default           { \u0027Spread out\u0027 }\n    }\n}\n\n# Apply classification using the pipeline\n$classified = $ranked | ForEach-Object {\n    [PSCustomObject]@{\n        Name    = $_.Name\n        Density = $_.Density\n        Tier    = Get-DensityTier -Density $_.Density\n    }\n}\n\n# Group and summarize\n$classified | Group-Object Tier | ForEach-Object {\n    $names = ($_.Group | ForEach-Object { $_.Name }) -join \u0027, \u0027\n    Write-Output \u0022$($_.Name) ($($_.Count)): $names\u0022\n}"
+    },
+    {
+      "id": "06bb670f-9f82-4147-8f3d-cc2e38a4b2e2",
+      "type": "markdown",
+      "source": "## Error Handling\n\nPowerShell distinguishes between terminating errors (\u0060throw\u0060, \u0060Write-Error -ErrorAction Stop\u0060) and non-terminating errors (\u0060Write-Error\u0060). Verso captures both, along with warnings via \u0060Write-Warning\u0060.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022error-handling\u0022\u003EError Handling\u003C/h2\u003E\n\u003Cp\u003EPowerShell distinguishes between terminating errors (\u003Ccode\u003Ethrow\u003C/code\u003E, \u003Ccode\u003EWrite-Error -ErrorAction Stop\u003C/code\u003E) and non-terminating errors (\u003Ccode\u003EWrite-Error\u003C/code\u003E). Verso captures both, along with warnings via \u003Ccode\u003EWrite-Warning\u003C/code\u003E.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "9715d023-95a8-49c6-8869-072a0b1383d5",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Non-terminating error (execution continues)\nWrite-Error \u0027This is a non-terminating error\u0027\nWrite-Output \u0027Execution continues after Write-Error\u0027"
+    },
+    {
+      "id": "aae3977c-9371-455e-aa23-a55eb3c6fd12",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Warning stream\nWrite-Warning \u0027Low disk space on drive C:\u0027\nWrite-Output \u0027Warnings do not stop execution\u0027"
+    },
+    {
+      "id": "19821c29-aab0-415f-a249-dc74780c3d76",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Try/Catch for terminating errors\ntry {\n    $result = 1 / 0\n} catch {\n    Write-Output \u0022Caught error: $($_.Exception.Message)\u0022\n}\n\nWrite-Output \u0027Recovered from the error\u0027"
+    },
+    {
+      "id": "c2c560f1-5032-4348-9921-023d3c5fde37",
+      "type": "markdown",
+      "source": "## Multi-Cell Computation\n\nState flows naturally across cells. Here we build up a statistical summary step by step.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022multi-cell-computation\u0022\u003EMulti-Cell Computation\u003C/h2\u003E\n\u003Cp\u003EState flows naturally across cells. Here we build up a statistical summary step by step.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "74f1918c-c72f-48ba-9132-928d2eb11c01",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Compute statistics using Measure-Object\n$popStats = $cities | Measure-Object -Property Population -Sum -Average -Minimum -Maximum\n\n$stats = [PSCustomObject]@{\n    Count             = $cities.Count\n    TotalPopulation   = $popStats.Sum\n    AveragePopulation = [math]::Round($popStats.Average, 0)\n    Largest           = ($cities | Sort-Object Population -Descending | Select-Object -First 1).Name\n    Smallest          = ($cities | Sort-Object Population | Select-Object -First 1).Name\n}\n\n$stats | Format-List"
+    },
+    {
+      "id": "4efa74cf-c59e-48c4-a8cd-0ee10ae98e4f",
+      "type": "markdown",
+      "source": "## String Interpolation and Formatting\n\nPowerShell supports double-quoted string interpolation, here-strings, and the \u0060-f\u0060 format operator.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022string-interpolation-and-formatting\u0022\u003EString Interpolation and Formatting\u003C/h2\u003E\n\u003Cp\u003EPowerShell supports double-quoted string interpolation, here-strings, and the \u003Ccode\u003E-f\u003C/code\u003E format operator.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "c35160bd-9e1d-475d-ab15-5f8b8151572d",
+      "type": "code",
+      "language": "powershell",
+      "source": "# String interpolation\n$top = $ranked | Select-Object -First 3\nforeach ($city in $top) {\n    Write-Output \u0022$($city.Name): $($city.Density) people per km\u00B2\u0022\n}\n\n# Format operator (-f binds tightly, so wrap the template in parens)\nWrite-Output (\u0022Total cities analyzed: {0}\u0022 -f $cities.Count)\nWrite-Output (\u0022Largest: {0}, Smallest: {1}\u0022 -f $stats.Largest, $stats.Smallest)"
+    },
+    {
+      "id": "f4c8096b-c05e-4c06-8be0-cf2a976e72f3",
+      "type": "markdown",
+      "source": "## Variable Sharing\n\nVariables you assign in PowerShell cells are automatically published to Verso\u0027s variable store. Other kernels (C#, F#, Python) can read them, and variables from other kernels are injected into your PowerShell session.\n\nThe store itself is available as \u0060$VersoVariables\u0060 for direct API access.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022variable-sharing\u0022\u003EVariable Sharing\u003C/h2\u003E\n\u003Cp\u003EVariables you assign in PowerShell cells are automatically published to Verso\u0027s variable store. Other kernels (C#, F#, Python) can read them, and variables from other kernels are injected into your PowerShell session.\u003C/p\u003E\n\u003Cp\u003EThe store itself is available as \u003Ccode\u003E$VersoVariables\u003C/code\u003E for direct API access.\u003C/p\u003E\n"
+        }
+      ]
+    },
+    {
+      "id": "d778c3b5-1dd1-4182-b59b-0cfa4076f1f2",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Variables assigned in PS are auto-published to the store after each cell\n$greeting = \u0027Hello from PowerShell!\u0027\n$favoriteNumber = 42\n$cityNames = $cities | ForEach-Object { $_.Name }\n\nWrite-Output \u0022Set \u0060$greeting, \u0060$favoriteNumber, and \u0060$cityNames\u0022"
+    },
+    {
+      "id": "ab16f31a-612a-4c71-9d16-80c698b9b368",
+      "type": "code",
+      "language": "powershell",
+      "source": "# Variables from the previous cell are now in the store \u2014 read them back\n$retrieved = $VersoVariables.Get[string](\u0027greeting\u0027)\nWrite-Output \u0022Retrieved from variable store: $retrieved\u0022\n\n# You can also access variables from other kernels directly by name\n# (they\u0027re injected into the PS session at the start of each cell)\nWrite-Output \u0022Favorite number: $favoriteNumber\u0022\nWrite-Output \u0022City names: $($cityNames -join \u0027, \u0027)\u0022"
+    },
+    {
+      "id": "02b9a5dc-09f0-4130-b91f-c4f55e90449f",
+      "type": "markdown",
+      "source": "## What\u0027s Next?\n\nTry mixing PowerShell cells with other languages in the same notebook. Variables flow between kernels automatically:\n\n- Compute data in **PowerShell**, visualize in **C#**\n- Query a database in **SQL**, process results in **PowerShell**\n- Define types in **F#**, consume them in **PowerShell**\n\nPowerShell\u0027s full cmdlet library is available \u2014 \u0060Get-ChildItem\u0060, \u0060Invoke-RestMethod\u0060, \u0060ConvertFrom-Json\u0060, and everything else you\u0027re used to.",
+      "outputs": [
+        {
+          "mimeType": "text/html",
+          "content": "\u003Ch2 id=\u0022whats-next\u0022\u003EWhat\u0027s Next?\u003C/h2\u003E\n\u003Cp\u003ETry mixing PowerShell cells with other languages in the same notebook. Variables flow between kernels automatically:\u003C/p\u003E\n\u003Cul\u003E\n\u003Cli\u003ECompute data in \u003Cstrong\u003EPowerShell\u003C/strong\u003E, visualize in \u003Cstrong\u003EC#\u003C/strong\u003E\u003C/li\u003E\n\u003Cli\u003EQuery a database in \u003Cstrong\u003ESQL\u003C/strong\u003E, process results in \u003Cstrong\u003EPowerShell\u003C/strong\u003E\u003C/li\u003E\n\u003Cli\u003EDefine types in \u003Cstrong\u003EF#\u003C/strong\u003E, consume them in \u003Cstrong\u003EPowerShell\u003C/strong\u003E\u003C/li\u003E\n\u003C/ul\u003E\n\u003Cp\u003EPowerShell\u0027s full cmdlet library is available \u2014 \u003Ccode\u003EGet-ChildItem\u003C/code\u003E, \u003Ccode\u003EInvoke-RestMethod\u003C/code\u003E, \u003Ccode\u003EConvertFrom-Json\u003C/code\u003E, and everything else you\u0027re used to.\u003C/p\u003E\n"
+        }
+      ]
+    }
+  ],
+  "layouts": {
+    "dashboard": {
+      "cells": {
+        "ps000001-0001-0001-0001-000000000001": {
+          "row": 0,
+          "col": 0,
+          "width": 12,
+          "height": 3,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000002": {
+          "row": 3,
+          "col": 0,
+          "width": 6,
+          "height": 5,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000004": {
+          "row": 3,
+          "col": 6,
+          "width": 6,
+          "height": 5,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000008": {
+          "row": 8,
+          "col": 0,
+          "width": 6,
+          "height": 5,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000014": {
+          "row": 8,
+          "col": 6,
+          "width": 6,
+          "height": 5,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000016": {
+          "row": 13,
+          "col": 0,
+          "width": 6,
+          "height": 4,
+          "visible": true
+        },
+        "ps000001-0001-0001-0001-000000000018": {
+          "row": 13,
+          "col": 6,
+          "width": 6,
+          "height": 4,
+          "visible": true
+        }
+      }
+    }
+  }
+}
