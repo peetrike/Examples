@@ -1,4 +1,12 @@
-﻿[CmdletBinding(
+﻿<#
+    .DESCRIPTION
+        The tested parameters are preference parameters that are also visible in
+        functions from same script, but not in functions from custom module.
+
+        This script shows, how these parameters can be passed, when needed
+#>
+
+[CmdletBinding(
     SupportsShouldProcess
 )]
 param ()
