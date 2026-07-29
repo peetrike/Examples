@@ -2,7 +2,7 @@
 
 [CmdletBinding()]
 param (
-    $Min = 10,
+    $Min = 1,
     $Max = 100
 )
 
@@ -33,28 +33,50 @@ try {
 $Technique = @{
     'CS Specific' = {
         $Property = 'DomainRole'
-        $Role = ([wmisearcher] "SELECT $Property FROM Win32_ComputerSystem").Get() |
-            Select-Object -ExpandProperty $Property
-        [Microsoft.PowerShell.Commands.DomainRole] $Role
+        [Microsoft.PowerShell.Commands.DomainRole] $Role =
+            ([wmisearcher] "SELECT $Property FROM Win32_ComputerSystem").Get() |
+                Select-Object -ExpandProperty $Property
+        @(
+            [Microsoft.PowerShell.Commands.DomainRole]::BackupDomainController
+            [Microsoft.PowerShell.Commands.DomainRole]::PrimaryDomainController
+        ) -contains $Role
     }
     'CS Generic'  = {
-        $Role = ([wmisearcher] 'SELECT * FROM Win32_ComputerSystem').Get() |
-            Select-Object -ExpandProperty DomainRole
-        [Microsoft.PowerShell.Commands.DomainRole] $Role
+        [Microsoft.PowerShell.Commands.DomainRole] $Role =
+            ([wmisearcher] 'SELECT * FROM Win32_ComputerSystem').Get() |
+                Select-Object -ExpandProperty DomainRole
+        @(
+            [Microsoft.PowerShell.Commands.DomainRole]::BackupDomainController
+            [Microsoft.PowerShell.Commands.DomainRole]::PrimaryDomainController
+        ) -contains $Role
+    }
+    'CS WMI'      = {
+        [Microsoft.PowerShell.Commands.DomainRole] $Role =
+            ([wmi] "Win32_ComputerSystem='$env:COMPUTERNAME'").DomainRole
+
+        @(
+            [Microsoft.PowerShell.Commands.DomainRole]::BackupDomainController
+            [Microsoft.PowerShell.Commands.DomainRole]::PrimaryDomainController
+        ) -contains $Role
     }
     'OS Specific' = {
         $Property = 'ProductType'
-        $Role = ([wmisearcher] "SELECT $Property FROM Win32_OperatingSystem").Get() |
-            Select-Object -ExpandProperty $Property
-        [Microsoft.PowerShell.Commands.ProductType] $Role
+        [Microsoft.PowerShell.Commands.ProductType] $Role =
+            ([wmisearcher] "SELECT $Property FROM Win32_OperatingSystem").Get() |
+                Select-Object -ExpandProperty $Property
+
+        $Role -eq [Microsoft.PowerShell.Commands.ProductType]::DomainController
     }
     'OS Generic'  = {
-        $Role = ([wmisearcher] 'SELECT * FROM Win32_OperatingSystem').Get() |
-            Select-Object -ExpandProperty ProductType
-        [Microsoft.PowerShell.Commands.ProductType] $Role
+        [Microsoft.PowerShell.Commands.ProductType] $Role =
+            ([wmisearcher] 'SELECT * FROM Win32_OperatingSystem').Get() |
+                Select-Object -ExpandProperty ProductType
+
+        $Role -eq [Microsoft.PowerShell.Commands.ProductType]::DomainController
     }
-    'WMI'         = {
-        [Microsoft.PowerShell.Commands.ProductType] ([wmi] "Win32_ComputerSystem='$env:COMPUTERNAME'").DomainRole
+    'OS WMI'      = {
+        [Microsoft.PowerShell.Commands.ProductType] $Role = ([wmi] 'Win32_OperatingSystem=@').ProductType
+        $Role -eq [Microsoft.PowerShell.Commands.ProductType]::DomainController
     }
 }
 
