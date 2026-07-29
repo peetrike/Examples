@@ -8,17 +8,23 @@ function test {
         SupportsShouldProcess
     )]
     param ()
+
+    if ($DebugPreference -eq 'Inquire') {
+        $DebugPreference = 'Continue'
+    }
+
+    Write-Verbose -Message 'inside function'
+    Write-Debug -Message 'debug message'
+
     [PSCustomObject]@{
-        Verbose = $PSBoundParameters['Verbose']
+        Verbose = [bool] $PSBoundParameters['Verbose']
         Debug   = $PSBoundParameters.ContainsKey('Debug')
-        WhatIf  = $PSBoundParameters['WhatIf']
-        Confirm = $PSBoundParameters['Confirm']
+        WhatIf  = $WhatIfPreference
+        Confirm = $Confirm.IsPresent
     }
 }
 
 Write-Warning -Message ('Verbose is {0}' -f $PSBoundParameters['Verbose'])
-if ($PSBoundParameters['Whatif']) {
-    Write-Warning -Message 'Whatif present, skipping'
-} else {
+if ($PSCmdlet.ShouldProcess('run function')) {
     test @PSBoundParameters
 }
