@@ -14,13 +14,13 @@ function Get-FsmoRole {
     $DomainRole = Get-ADDomain | Select-Object PDC*, *master
 
     $OutputProps = @{}
-    foreach ($r in $ForestRole.psobject.Properties.Name) {
+    foreach ($r in $ForestRole.psobject.Properties.Name -like $Role) {
         $OutputProps[$r] = $ForestRole.$r
     }
-    foreach ($r in $DomainRole.psobject.Properties.Name) {
+    foreach ($r in $DomainRole.psobject.Properties.Name -like $Role) {
         $OutputProps[$r] = $DomainRole.$r
     }
-    [PSCustomObject] $OutputProps | Select-Object -Property $Role
+    [PSCustomObject] $OutputProps
 }
 
 Get-FsmoRole @PSBoundParameters
