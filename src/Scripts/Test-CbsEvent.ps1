@@ -10,10 +10,8 @@ param (
     $After
 )
 
-$Provider = 'Microsoft-Windows-Servicing'
-
 $EventProps = @{
-    ProviderName = $Provider
+    ProviderName = 'Microsoft-Windows-Servicing'
     Id           = 1    # Initiating changes
 }
 $VerboseOff = @{
