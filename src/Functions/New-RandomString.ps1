@@ -1,4 +1,17 @@
-﻿function New-RandomString {
+
+<#PSScriptInfo
+    .VERSION 0.0.1
+    .GUID 543c5f4e-e710-4128-aff8-93b9e5b887a1
+    .AUTHOR Urmas Kuusk
+#>
+
+<#
+    .DESCRIPTION
+        Generate random password
+#>
+
+
+function New-RandomString {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Int32[]]
