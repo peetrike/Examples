@@ -1,12 +1,15 @@
-﻿
+﻿[CmdletBinding()]
+param ()
+
 New-Module -name Automation {
     function Get-ScriptName {
         [CmdletBinding()]
         param ()
 
         $namePattern = '\.ps1$'
-        $StackItem = Get-PSCallStack | Where-Object Command -Match $namePattern
-        $StackItem.Command -replace $namePattern
+        $ScriptPath = Get-PSCallStack |
+            Select-Object -First 1 -ExpandProperty ScriptName
+        (Split-Path -Path $ScriptPath -Leaf) -replace $namePattern
     }
 
     function Get-ScriptInfo {
@@ -16,6 +19,6 @@ New-Module -name Automation {
         Get-ScriptName
     }
     Export-ModuleMember Get-ScriptInfo
-} | Import-Module
+} | Import-Module -Verbose:$false
 
 Get-ScriptInfo
