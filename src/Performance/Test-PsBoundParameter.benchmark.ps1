@@ -1,4 +1,5 @@
-﻿#Requires -Module BenchPress
+﻿#Requires -Version 2.0
+# Requires -Module BenchPress
 
 [CmdletBinding()]
 param (
@@ -6,18 +7,18 @@ param (
     $Max = 10000
 )
 
-$testObject = [pscustomobject]@{
-    One = 'One'
-    two = 'two'
-    number = 11
+$testObject = New-Object -TypeName psobject -Property @{
+    One     = 'One'
+    two     = 'two'
+    number  = 11
     boolean = $true
-    object = [System.Object]
+    object  = [System.Object]
 }
 
 function f1 {
     [CmdletBinding()]
     param (
-            [Parameter(Mandatory, ValueFromPipeline)]
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [Object]
         $InputObject,
             [string]
@@ -50,7 +51,7 @@ function f1 {
 function f2 {
     [CmdletBinding()]
     param (
-            [Parameter(Mandatory, ValueFromPipeline)]
+            [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
             [Object]
         $InputObject,
             [string]
@@ -87,10 +88,10 @@ function f2 {
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
-        'Process with foreach' = {
+        'Foreach' = {
             $testObject | f1 -one 'kaks' -Two 'YKS' -number 9
         }
-        'process with switch'  = {
+        'Switch'  = {
             $testObject | f2 -one 'kaks' -Two 'YKS' -number 9
         }
     } -GroupName $iterations

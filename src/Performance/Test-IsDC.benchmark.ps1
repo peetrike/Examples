@@ -1,4 +1,5 @@
-﻿# Requires -Module BenchPress
+﻿#Requires -Version 2.0
+# Requires -Module BenchPress
 
 [CmdletBinding()]
 param (
@@ -31,6 +32,14 @@ try {
 }
 
 $Technique = @{
+    'Service'     = {
+        try {
+            $null = Get-Service ntds -ErrorAction Stop
+            $true
+        } catch {
+            $false
+        }
+    }
     'CS Specific' = {
         $Property = 'DomainRole'
         [Microsoft.PowerShell.Commands.DomainRole] $Role =
@@ -42,9 +51,10 @@ $Technique = @{
         ) -contains $Role
     }
     'CS Generic'  = {
+        $Property = 'DomainRole'
         [Microsoft.PowerShell.Commands.DomainRole] $Role =
             ([wmisearcher] 'SELECT * FROM Win32_ComputerSystem').Get() |
-                Select-Object -ExpandProperty DomainRole
+                Select-Object -ExpandProperty $Property
         @(
             [Microsoft.PowerShell.Commands.DomainRole]::BackupDomainController
             [Microsoft.PowerShell.Commands.DomainRole]::PrimaryDomainController
@@ -80,15 +90,11 @@ $Technique = @{
     }
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
-    }
-} else {
+if ($PSVersionTable.PSVersion.Major -eq 2) {
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
+}
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $Max -ScriptBlock $Technique.$key
-    }
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
 }

@@ -1,4 +1,5 @@
-﻿#Requires -Modules BenchPress
+﻿#Requires -Version 3
+#Requires -Modules BenchPress
 
 $licenseCsvPath = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-490a-9ada-c6089a1fc5b0'
 $licenseCsvName = 'Product names and service plan identifiers for licensing.csv'

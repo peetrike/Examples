@@ -14,14 +14,16 @@ $ClassName = 'Win32_OperatingSystem'
 $PropertyName = 'Version'
 
 $Technique = @{
-    '.NET'       = {
+    '.NET'      = {
         [System.Environment]::OSVersion.Version
     }
-    AcceleratorS = {
+    Accelerator = {
         [Version] ([wmi] ('{0}=@' -f $ClassName)).$PropertyName
     }
-    AcceleratorQ = {
-        [Version] ([wmisearcher] ('Select {1} from {0}' -f $ClassName, $PropertyName)).Get().$PropertyName
+    Searcher    = {
+        $result = ([wmisearcher] "Select $PropertyName From $ClassName").Get() |
+            Select-Object -ExpandProperty $PropertyName
+        [Version] $result
     }
 }
 
@@ -34,6 +36,12 @@ $wmiTechnique = @{
         [Version] (Get-WmiObject -Class $ClassName -Property $PropertyName).$PropertyName
     }
 }
+
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    $Technique += $wmiTechnique
+}
+
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
         'GCIM full'     = {
@@ -44,21 +52,12 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         }
     }
 
-    if ($PSVersionTable.PSVersion.Major -le 5) {
-        $Technique += $wmiTechnique
-    }
-
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
+        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName "$iterations times"
     }
 } else {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
 
-    $Technique += $wmiTechnique
-    @(
-        foreach ($t in $Technique.Keys) {
-            Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
-        }
-    ) | Sort-Object Time
+    Measure-ScriptBlock -Iterations $Max -Technique $Technique -GroupName "$Max times"
 }

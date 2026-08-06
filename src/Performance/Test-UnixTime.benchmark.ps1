@@ -9,11 +9,9 @@ param (
 function ConvertTo-UnixTime1 {
     [OutputType([double])]
     param (
-            [Parameter(
-                ValueFromPipeline = $true
-            )]
+            [Parameter(ValueFromPipeline = $true)]
             [datetime]
-        $Date = (Get-Date)
+        $Date = [datetime]::Now
     )
 
     process {
@@ -26,11 +24,9 @@ function ConvertTo-UnixTime1 {
 function ConvertTo-UnixTime2 {
     [OutputType([double])]
     param (
-            [Parameter(
-                ValueFromPipeline = $true
-            )]
+            [Parameter(ValueFromPipeline = $true)]
             [datetime]
-        $Date = ([datetime]::Now)
+        $Date = [datetime]::Now
     )
 
     begin {
@@ -47,9 +43,7 @@ function ConvertTo-UnixTime2 {
 function ConvertTo-UnixTime3 {
     [OutputType([double])]
     param (
-            [Parameter(
-                ValueFromPipeline = $true
-            )]
+            [Parameter(ValueFromPipeline = $true)]
             [datetime]
         $Date = ([datetime]::Now)
     )
@@ -68,25 +62,84 @@ function ConvertTo-UnixTime3 {
     }
 }
 
-$newer = $PSVersionTable.PSVersion.Major -gt 2
+function ConvertTo-UnixTimeOffset {
+    [OutputType([Int64])]
+    [CmdletBinding()]
+    param (
+            [Parameter(ValueFromPipeline = $true)]
+            [DateTimeOffset]
+        $Date = [DateTimeOffset]::Now
+    )
 
-$dateArray = [datetime]::Now, [datetime]::UtcNow, [datetime]::Now.ToString('s'), '1970.1.1T02:00:00'
-
-$Technique = @{
-    'original' = { $dateArray | ConvertTo-UnixTime1 }
-    '.net' = { $dateArray | ConvertTo-UnixTime2 }
-    'conversion' = { $dateArray | ConvertTo-UnixTime3 }
+    process {
+        $date.ToUnixTimeSeconds()
+    }
 }
 
-if ($newer) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
-    }
-} else {
-    Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
-    Import-Module .\measure.psm1
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
+function ConvertTo-UnixTimeInt {
+    [OutputType([Int64])]
+    param (
+            [Parameter(ValueFromPipeline = $true)]
+            [datetime]
+        $Date = [datetime]::Now
+    )
+
+    begin {
+        $UnixEpoch = [datetime] '1/1/1970'
     }
+
+    process {
+        $Date.ToUniversalTime().Subtract($UnixEpoch).TotalSeconds -as [Int64]
+    }
+}
+
+function ConvertTo-UnixTimeLong {
+    [OutputType([long])]
+    param (
+            [Parameter(ValueFromPipeline = $true)]
+            [datetime]
+        $Date = [datetime]::Now
+    )
+
+    begin {
+        $UnixEpoch = [datetime] '1/1/1970'
+    }
+
+    process {
+        $Date.ToUniversalTime().Subtract($UnixEpoch).TotalSeconds -as [long]
+    }
+}
+
+
+$dateArray = @(
+    [datetime]::Now
+    [datetime]::UtcNow
+    [datetime]::Now.ToString('s')
+    '1970.1.1T02:00:00'
+    '1970.1.1T02:00:00.921'
+    '1970.1.1T02:00:00.5'
+    '1970.1.1'
+    '1970.1.1Z'
+)
+
+$Technique = @{
+    'original'   = { $dateArray | ConvertTo-UnixTime1 }
+    '.net'       = { $dateArray | ConvertTo-UnixTime2 }
+    'conversion' = { $dateArray | ConvertTo-UnixTime3 }
+    'Int64'      = { $dateArray | ConvertTo-UnixTimeInt }
+    'Long'       = { $dateArray | ConvertTo-UnixTimeLong }
+}
+
+if ($PSVersionTable.PSVersion.Major -eq 2) {
+    Write-Verbose -Message 'PowerShell 2'
+    Import-Module .\measure.psm1
+} elseif ($PSVersionTable.PSVersion.Major -ge 5) {
+    $Technique += @{
+        'DateTimeOffset' = { $dateArray | ConvertTo-UnixTimeOffset }
+    }
+}
+
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
 }

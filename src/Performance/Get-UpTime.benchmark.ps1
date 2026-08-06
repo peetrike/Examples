@@ -4,7 +4,7 @@ param (
     $Max = 100
 )
 
-function Get-UpTime1 {
+function Get-UpTimeC {
     [OutputType([datetime], [timespan])]
     [CmdletBinding()]
     param (
@@ -29,7 +29,7 @@ function Get-UpTime1 {
     }
 }
 
-function Get-UpTime2 {
+function Get-UpTimeS {
     [OutputType([datetime], [timespan])]
     [CmdletBinding()]
     param (
@@ -51,7 +51,28 @@ function Get-UpTime2 {
     }
 }
 
-function Get-UpTime3 {
+function Get-UpTimeA {
+    [OutputType([datetime], [timespan])]
+    [CmdletBinding()]
+    param (
+            [switch]
+        $Since
+    )
+
+    $Property = 'LastBootUpTime'
+    $Class = 'Win32_OperatingSystem'
+
+    $LastBoot = ([wmi] "$Class=@").$Property
+    $LastBootTime = [Management.ManagementDateTimeConverter]::ToDateTime($LastBoot)
+
+    if ($Since) {
+        $LastBootTime
+    } else {
+        New-TimeSpan -Start $LastBootTime
+    }
+}
+
+function Get-UpTimeW {
     [OutputType([datetime], [timespan])]
     [CmdletBinding()]
     param (
@@ -69,7 +90,6 @@ function Get-UpTime3 {
             $seconds = $ticks / [Diagnostics.StopWatch]::Frequency
             New-TimeSpan -Seconds $seconds
         }
-
 
         if ($Since) {
             [datetime]::Now.Subtract($TimeSpan)
@@ -95,12 +115,14 @@ function Get-UpTime3 {
 }
 
 $Technique = @{
-    cmdlet   = { Get-UpTime1 }
-    searcher = { Get-UpTime2 }
-    stopwatch = { Get-UpTime3 }
-    sinceC   = { Get-UpTime1 -Since }
-    sinceS   = { Get-UpTime2 -Since }
-    sinceW   = { Get-UpTime3 -Since }
+    Cmdlet      = { Get-UpTimeC }
+    Searcher    = { Get-UpTimeS }
+    stopWatch   = { Get-UpTimeW }
+    Accelerator = { Get-UpTimeA }
+    sinceC      = { Get-UpTimeC -Since }
+    sinceS      = { Get-UpTimeS -Since }
+    sinceW      = { Get-UpTimeW -Since }
+    sinceA      = { Get-UpTimeA -Since }
 }
 
 if ($PSVersionTable.PSVersion.Major -gt 5){
@@ -110,15 +132,11 @@ if ($PSVersionTable.PSVersion.Major -gt 5){
     }
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
-    }
-} else {
-    Write-Verbose -Message 'Using measure.psm1'
+if ($PSVersionTable.PSVersion.Major -eq 2) {
+    Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
+}
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
-    }
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName "$iterations times"
 }

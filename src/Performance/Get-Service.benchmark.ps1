@@ -16,19 +16,19 @@ $ServiceName = 'bits'
 $Property = 'Name', 'PathName'
 
 $Technique = @{
-    dotNet       = {
+    dotNet      = {
         $serviceName = $ServiceName
         [ServiceProcess.ServiceController] $serviceName
     }
-    Cmdlet       = {
+    Cmdlet      = {
         $serviceName = $ServiceName
         Get-Service $serviceName
     }
-    AcceleratorO = {
+    Accelerator = {
         $serviceName = $ServiceName
         [wmi] "Win32_Service.Name='$serviceName'"
     }
-    AcceleratorQ = {
+    Searcher    = {
         $serviceName = $ServiceName
         $property = $Property -join ','
         ([wmisearcher] "Select $property From Win32_Service Where Name='$serviceName'").Get()
@@ -47,6 +47,10 @@ $wmiTechnique = @{
     }
 }
 
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    $Technique += $wmiTechnique
+}
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
         CimSpecific = {
@@ -60,21 +64,12 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
         }
     }
 
-    if ($PSVersionTable.PSVersion.Major -le 5) {
-        $Technique += $wmiTechnique
-    }
-
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
+        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName "$iterations times"
     }
 } else {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
 
-    $Technique += $wmiTechnique
-    @(
-        foreach ($t in $Technique.Keys) {
-            Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
-        }
-    ) | Sort-Object Time
+    Measure-ScriptBlock -Iterations $Max -Technique $Technique -GroupName "$Max times"
 }

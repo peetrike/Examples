@@ -23,44 +23,92 @@ param (
 )
 
 $Technique = @{
-    'New-Object'          = {
-        $list = New-Object System.Collections.Generic.List[Object]
+    'New-Object -Property' = {
+        $o = New-Object -TypeName psobject -Property @{
+            Message = 'text'
+            Count   = 3
+            Date    = [datetime]::Now
+        }
+        $o.psobject.TypeNames.Insert(0, 'MyCustom')
+        $o
     }
-    'casting empty array' = {
-        $list = [Collections.Generic.List[Object]] @()
+    'Select-Object'        = {
+        $o = New-Object -TypeName psobject
+        $o = $o | Select-Object @{
+            Name       = 'Message'
+            Expression = { 'text' }
+        }, @{
+            Name       = 'Count'
+            Expression = { 3 }
+        }, @{
+            Name       = 'Date'
+            Expression = { [datetime]::Now }
+        }
+        $o.psobject.TypeNames.Insert(0, 'MyCustom')
+        $o
     }
-    'strong typing'       = {
-        [Collections.Generic.List[Object]] $list = @()
+
+    'Add-Member w/ pipe'   = {
+        $o = New-Object PSObject |
+            Add-Member -MemberType NoteProperty -Name Message -Value text -PassThru |
+            Add-Member -MemberType NoteProperty -Name Count -Value 3 -PassThru |
+            Add-Member -MemberType NoteProperty -Name Date -Value ([datetime]::Now) -PassThru
+        $o.psobject.TypeNames.Insert(0, 'MyCustom')
+        $o
     }
-    'Activator'           = {
-        $list = [Activator]::CreateInstance([Collections.Generic.List[Object]], @())
+    'Add-Member w/o pipe'  = {
+        $o = New-Object PSObject
+        Add-Member -InputObject $o -MemberType NoteProperty -Name Message -Value text
+        Add-Member -InputObject $o -MemberType NoteProperty -Name Count -Value 3
+        Add-Member -InputObject $o -MemberType NoteProperty -Name Date -Value ([datetime]::Now)
+        $o.psobject.TypeNames.Insert(0, 'MyCustom')
+        $o
     }
 }
 
-
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
-        'typecasting hashtable' = {
-            $list = [Collections.Generic.List[Object]] @{}
+        'PSCustomObject' = {
+            [PSCustomObject] @{
+                PSTypeName = 'MyCustom'
+                Message    = 'text'
+                Count      = 3
+                Date       = [datetime]::Now
+            }
+        }
+        'Add-Member PS3' = {
+            New-Object PSObject |
+                Add-Member -NotePropertyName Message -NotePropertyValue text -PassThru |
+                Add-Member -NotePropertyName Date -NotePropertyValue ([datetime]::Now) -PassThru |
+                Add-Member -NotePropertyName Count -NotePropertyValue 3 -TypeName 'MyCustom' -PassThru
         }
     }
 
     if ($PSVersionTable.PSVersion.Major -gt 4) {
         $Technique += @{
-            'Constructor' = {
-                $list = [Collections.Generic.List[Object]]::new()
+            'PSObject new()'   = {
+                $o = [psobject]::new()
+                $o.psobject.Properties.Add([PSNoteProperty]::new('Message', 'text'))
+                $o.psobject.Properties.Add([PSNoteProperty]::new('Count', 3))
+                $o.psobject.Properties.Add([PSNoteProperty]::new('Date', [datetime]::Now))
+                $o.psobject.TypeNames.Insert(0, 'MyCustom')
+                $o
+            }
+            'Add-Member multi' = {
+                New-Object PSObject |
+                    Add-Member -TypeName 'MyCustom' -NotePropertyMembers @{
+                        Message = 'text'
+                        Count   = 3
+                        Date    = [datetime]::Now
+                    } -PassThru
             }
         }
-    }
-
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $Iterations -Technique $Technique -GroupName $Iterations
     }
 } else {
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
+}
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
-    }
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $Iterations -Technique $Technique -GroupName $Iterations
 }

@@ -1,21 +1,38 @@
-﻿#Requires -Modules benchpress
+﻿#Requires -Version 2.0
+# Requires -Modules benchpress
 
-$SecureString = ConvertTo-SecureString -String 'ThisispA$sw0rd' -AsPlainText -Force
-
-function ConvertTo-String2 {
+function NetworkCredential {
     [OutputType([string])]
     param (
-            [securestring]
+            [Security.SecureString]
         $SecureString
     )
 
-    [Net.NetworkCredential]::new('', $SecureString).Password
+    $credential = new-object System.Net.NetworkCredential -ArgumentList @(
+        'user'
+        $SecureString
+    )
+    $credential.Password
+}
+
+function Credential {
+    [OutputType([string])]
+    param (
+            [Security.SecureString]
+        $SecureString
+    )
+
+    $Cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList @(
+        'user'
+        $SecureString
+    )
+    $Cred.GetNetworkCredential().Password
 }
 
 function ConvertTo-String {
     [OutputType([string])]
     param (
-            [securestring]
+            [Security.SecureString]
         $SecureString
     )
 
@@ -28,21 +45,35 @@ function ConvertTo-String {
     }
 }
 
+$SecureString = ConvertTo-SecureString -String 'ThisispA$sw0rd' -AsPlainText -Force
+
 $Technique = @{
-    'Interop'           = {
+    'Interop'    = {
         ConvertTo-String $SecureString
     }
-    'NetworkCredential' = {
-        ConvertTo-String2 $SecureString
+    'Credential' = {
+        Credential $SecureString
     }
 }
 
-if ($PSVersionTable.PSVersion.Major -ge 7) {
+
+if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
-        'cmdlet' = {
-            ConvertFrom-SecureString $SecureString -AsPlainText
+        'NetworkCredential' = {
+            NetworkCredential $SecureString
         }
     }
+
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        $Technique += @{
+            'cmdlet' = {
+                ConvertFrom-SecureString $SecureString -AsPlainText
+            }
+        }
+    }
+} else {
+    Write-Verbose -Message 'PowerShell 2'
+    Import-Module .\measure.psm1
 }
 
 Measure-Benchmark -Technique $Technique -RepeatCount 10000

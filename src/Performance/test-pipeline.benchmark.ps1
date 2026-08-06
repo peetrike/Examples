@@ -1,4 +1,5 @@
-﻿#Requires -Module BenchPress
+﻿#Requires -Version 2
+# Requires -Module BenchPress
 
 [CmdletBinding()]
 param (
@@ -49,6 +50,10 @@ function get-data2 {
     }
 }
 
+filter get-data3 {
+    $_
+}
+
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
     Measure-Benchmark -RepeatCount $iterations -Technique @{
         'Foreach-Object'                       = {
@@ -56,6 +61,9 @@ for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
                 Write-Verbose ('Processing {0}' -f $_)
                 $_
             }
+        }
+        'Filter'                               = {
+            Get-ChildItem -Recurse | get-data3
         }
         'Function: emit data in end block'     = {
             Get-ChildItem -Recurse | get-data2

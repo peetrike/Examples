@@ -1,5 +1,5 @@
 ﻿#Requires -Version 3
-#Requires -Modules Benchpress
+# Requires -Modules Benchpress
 
 [CmdletBinding()]
 param (
@@ -11,8 +11,8 @@ function Copy-Object {
     [CmdletBinding()]
     param (
             [Parameter(
-                Mandatory,
-                ValueFromPipeline
+                Mandatory = $true,
+                ValueFromPipeline = $true
             )]
         $InputObject
     )
@@ -36,8 +36,8 @@ function Copy-Object2 {
     [CmdletBinding()]
     param (
             [Parameter(
-                Mandatory,
-                ValueFromPipeline
+                Mandatory = $true,
+                ValueFromPipeline = $true
             )]
         $InputObject
     )
@@ -59,17 +59,17 @@ $Original = New-Object -TypeName psobject -Property @{
     Number = 1
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $Iterations -Technique @{
-            'CliXml' = {
-                $original = $Original
-                $copy = Copy-Object -InputObject $original
-            }
-            'Binary' = {
-                $original = $Original
-                $copy = Copy-Object2 -InputObject $original
-            }
-        } -GroupName ('{0} times' -f $iterations)
+$Technique = @{
+    'CliXml' = {
+        $original = $Original
+        $copy = Copy-Object -InputObject $original
     }
+    'Binary' = {
+        $original = $Original
+        $copy = Copy-Object2 -InputObject $original
+    }
+}
+
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $Iterations -Technique $Technique -GroupName "$iterations times"
 }

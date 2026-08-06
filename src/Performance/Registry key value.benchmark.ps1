@@ -31,24 +31,21 @@ $Technique = @{
    }
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    if ($PSVersionTable.PSVersion.Major -gt 5) {
-        $Technique += @{
-            'PS 5 style' = {
-                $PropertyName = 'ProgramFilesDir'
-                $KeyPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion'
-                Get-ItemPropertyValue -Path $KeyPath -Name $PropertyName
-            }
+if ($PSVersionTable.PSVersion.Major -gt 5) {
+    $Technique += @{
+        'PS 5 style' = {
+            $PropertyName = 'ProgramFilesDir'
+            $KeyPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion'
+            Get-ItemPropertyValue -Path $KeyPath -Name $PropertyName
         }
     }
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName $iterations
-    }
-} else {
+}
+
+if ($PSVersionTable.PSVersion.Major -eq 2) {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
+}
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -method $key -Iterations $Max -ScriptBlock $Technique[$key]
-    }
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName $iterations
 }

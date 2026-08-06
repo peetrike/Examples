@@ -29,7 +29,7 @@
     [char[]] $everySet = foreach ($key in $table.Keys | Get-Random -Count 4) {
         Get-Random -InputObject $table.$key
     }
-    [char[]] $allSet = for ($i = 5; $i -le $Length; $i++) { Get-Random -InputObject $AllSymbol }
+    [char[]] $allSet = foreach ($i in 5..$Length) { Get-Random -InputObject $AllSymbol }
 
     $builder = [System.Text.StringBuilder] $Length
     [void] $builder.Append($allSet)
@@ -37,7 +37,7 @@
     $builder.ToString()
 }
 
-function Get-RandomString1 {
+function New-Password {
     [OutputType([string])]
     [CmdletBinding()]
     param (
@@ -66,7 +66,7 @@ function Get-RandomString1 {
     $AllSymbol = $Number + $Letter + $Capital + $Symbol
 
     [char[]] $everySet = foreach ($key in $table.Keys | Get-Random -Count 4) { Get-Random -InputObject $table.$key }
-    [char[]] $allSet = for ($i = 5; $i -le $Length; $i++) {
+    [char[]] $allSet = foreach ($i in 5..$Length) {
         Get-Random -InputObject $AllSymbol
     }
     $full = $Length - 4
@@ -105,9 +105,7 @@ function Get-RandomStringArray {
     $AllSymbol = $Number + $Letter + $Capital + $Symbol
 
     -join @(
-        for ($i = 5; $i -le $Length; $i++) {
-            Get-Random -InputObject $AllSymbol
-        }
+        foreach ($i in 5..$Length) { Get-Random -InputObject $AllSymbol }
         foreach ($key in $table.Keys | Get-Random -Count 4) { Get-Random -InputObject $table.$key }
     )
 }
@@ -139,9 +137,7 @@ function Get-RandomStringRandom {
 
     $Array = @(
         foreach ($key in $table.Keys) { Get-Random -InputObject $table.$key }
-        for ($i = 5; $i -le $Length; $i++) {
-            Get-Random -InputObject $AllSymbol
-        }
+        foreach ($i in 5..$Length) { Get-Random -InputObject $AllSymbol }
     ) | Get-Random -Count $Length
     -join $Array
 }
@@ -210,24 +206,22 @@ $Iterations = 1000
 
 $Technique = @{
     'StringBuilder' = { Get-RandomString -Length $length }
-    'RandomBuilder' = { Get-RandomString1 -Length $length }
+    'RandomBuilder' = { New-Password -Length $length }
     'Array'         = { Get-RandomStringArray -Length $length }
     'RandomArray'   = { Get-RandomStringRandom -Length $length }
     'Oldest 2020'   = { Get-RandomStringOldest -Length $length }
     'Old 2024'      = { Get-RandomStringOld -Length $length }
 }
 
+$Iterations = 100
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     foreach ($length in 5, 15, 20, 64, 128) {
-        Measure-Benchmark -Technique $Technique -RepeatCount $Iterations -GroupName "Length $length "
+        Measure-Benchmark -Technique $Technique -RepeatCount $Iterations -GroupName "Length $length"
     }
 } else {
     $length = 64
-    $Max = $Iterations
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
 
-    foreach ($t in $Technique.Keys) {
-        Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
-    }
+    Measure-ScriptBlock -Iterations $Iterations -Technique $Technique -GroupName "Length $length"
 }

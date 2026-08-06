@@ -7,7 +7,7 @@
 [CmdletBinding()]
 param (
     $Min = 1,
-    $Max = 10
+    $Max = 100
 )
 
 $Technique = @{
@@ -24,7 +24,8 @@ $Technique = @{
         ([wmi] "Win32_Process.Handle=$PID").Name
     }
     'Searcher'     = {
-        ([wmisearcher] "select name from Win32_Process where Handle=$PID").Get().Name
+        ([wmisearcher] "select Name from Win32_Process where Handle=$PID").Get() |
+            Select-Object -ExpandProperty Name
     }
 }
 
@@ -41,22 +42,20 @@ if ($PSVersionTable.PSVersion.Major -le 5) {
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     $Technique += @{
-        'GCIM'         = {
+        'GCIM'      = {
             (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -Property Name).Name
         }
-        'GCIM full'   = {
+        'GCIM full' = {
             (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID").Name
         }
     }
 
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
+        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName "$iterations times"
     }
 } else {
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
 
-    foreach ($t in $Technique.Keys) {
-        Measure-ScriptBlock -Method $t -Iterations $Max -ScriptBlock $Technique.$t
-    }
+    Measure-ScriptBlock -Iterations $Max -Technique $Technique -GroupName "$Max times"
 }

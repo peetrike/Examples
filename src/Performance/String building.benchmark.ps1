@@ -1,4 +1,5 @@
-﻿# Requires -Module BenchPress
+﻿#Requires -Version 2.0
+# Requires -Module BenchPress
 
 [CmdletBinding()]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'string')]
@@ -30,15 +31,11 @@ $Technique = @{
     }
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $Repeat -Technique $Technique -GroupName ('{0} times' -f $iterations)
-    }
-} else {
-    Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
+if ($PSVersionTable.PSVersion.Major -eq 2) {
+    Write-Verbose -Message ('PowerShell 2: {0} times' -eq$Max)
     Import-Module .\measure.psm1
+}
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
-    }
+for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
+    Measure-Benchmark -RepeatCount $Repeat -Technique $Technique -GroupName ('{0} times' -f $iterations)
 }

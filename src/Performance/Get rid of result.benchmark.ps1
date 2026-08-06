@@ -7,34 +7,28 @@ param (
     $Max = 10000
 )
 
-$cmdlet = {
-    [Environment]::OSVersion | Out-Null
-}
-$redirect = {
-    [Environment]::OSVersion > $null
-}
-$assignment = {
-    $null = [Environment]::OSVersion
-}
-$void = {
-    [void] [Environment]::OSVersion
+$Technique = @{
+    'Out-Null' = {
+        [Environment]::OSVersion | Out-Null
+    }
+    'Redirect' = {
+        [Environment]::OSVersion > $null
+    }
+    '$null ='  = {
+        $null = [Environment]::OSVersion
+    }
+    '[void]'   = {
+        [void] [Environment]::OSVersion
+    }
 }
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
     for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $iterations -Technique @{
-            'Out-Null' = $cmdlet
-            'Redirect' = $redirect
-            '$null ='  = $assignment
-            '[void]'   = $void
-        } -GroupName ('{0} times' -f $iterations)
+        Measure-Benchmark -RepeatCount $iterations -Technique $Technique -GroupName ('{0} times' -f $iterations)
     }
 } else {
     Write-Verbose -Message ('{0} times]' -f $Max)
     Import-Module .\measure.psm1
 
-    Measure-ScriptBlock -Method 'Out-Null' -Iterations $Max -ScriptBlock $cmdlet
-    Measure-ScriptBlock -Method 'Redirect' -Iterations $Max -ScriptBlock $redirect
-    Measure-ScriptBlock -Method '$null =' -Iterations $Max -ScriptBlock $assignment
-    Measure-ScriptBlock -Method '[void]' -Iterations $Max -ScriptBlock $void
+    Measure-ScriptBlock -Iterations $Max -Technique $Technique
 }

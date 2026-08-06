@@ -11,33 +11,32 @@ $newer = $PSVersionTable.PSVersion.Major -gt 2
 
 $PropertyList = 'CSName', 'TotalVisibleMemorySize', 'FreePhysicalMemory'
 $BaseObject = [wmi] 'Win32_OperatingSystem=@'
-$PercentMemory = 100 * $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
 
 $Technique = @{
     'Add-Member'    = {
         $BaseObject = $BaseObject
-        $PercentMemory = $PercentMemory
         $PropertyList = $PropertyList
+        $PercentMemory = { 100 * $this.FreePhysicalMemory / $this.TotalVisibleMemorySize }
 
         $result = $BaseObject |
             Select-Object -Property $PropertyList |
-            Add-Member -MemberType NoteProperty -Name '%Free' -Value $PercentMemory -PassThru
+            Add-Member -MemberType ScriptProperty -Name '%Free' -Value $PercentMemory -PassThru
     }
     'Select-Object' = {
         $BaseObject = $BaseObject
-        $PercentMemory = $PercentMemory
         $PropertyList = $PropertyList
 
         $PercentProperty = @{
             Name       = '%Free'
-            Expression = { $PercentMemory }
+            Expression = { 100 * $_.FreePhysicalMemory / $_.TotalVisibleMemorySize }
         }
         $result = $BaseObject | Select-Object -Property ($PropertyList + $PercentProperty)
     }
     'New Object'    = {
         $BaseObject = $BaseObject
-        $PercentMemory = $PercentMemory
         $PropertyList = $PropertyList
+        $PercentMemory = 100 * $BaseObject.FreePhysicalMemory / $BaseObject.TotalVisibleMemorySize
+        $TypeName = 'System.Management.ManagementObject#root\cimv2\Win32_OperatingSystem'
 
         $ObjectProps = @{
             '%Free' = $PercentMemory
@@ -46,9 +45,12 @@ $Technique = @{
             $ObjectProps.$p = $BaseObject.$p
         }
         $result = if ($newer) {
+            $ObjectProps.PSTypeName = $TypeName
             [pscustomobject] $ObjectProps
         } else {
-            New-Object -TypeName psobject -Property $ObjectProps
+            $o = New-Object -TypeName psobject -Property $ObjectProps
+            $o.psobject.TypeNames.Insert(0, $TypeName)
+            $o
         }
     }
 }
@@ -61,7 +63,5 @@ if ($newer) {
     Write-Verbose -Message ('PowerShell 2: {0} times' -f $Max)
     Import-Module .\measure.psm1
 
-    foreach ($key in $Technique.Keys) {
-        Measure-ScriptBlock -Method $key -Iterations $max -ScriptBlock $Technique.$key
-    }
+    Measure-ScriptBlock -Iterations $max -Technique $Technique
 }

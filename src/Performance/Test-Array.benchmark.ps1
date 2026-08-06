@@ -8,62 +8,46 @@ param (
     $Repeat = 1
 )
 
-$ArrayAdd = {
-    $Array = @()
-    $Iterations = $Iterations
-    1..$Iterations | ForEach-Object {
-        $Array += 'tere'
+$Text = 'hello'
+
+$Technique = @{
+    'Array += in loop'   = {
+        $text = $Text
+        $iterations = $Iterations
+        $Array = @()
+        1..$iterations | ForEach-Object { $Array += $text }
     }
-}
-$Assignment = {
-    $Array = @()
-    $Iterations = $Iterations
-    $Array = 1..$Iterations | ForEach-Object {
-        'tere'
+    'Array assignment'   = {
+        $text = $Text
+        $iterations = $Iterations
+        $Array = @()
+        $Array = 1..$iterations | ForEach-Object { $text }
     }
-}
-$ArrayList = {
-    $Array = [Collections.ArrayList] @()
-    $Iterations = $Iterations
-    1..$Iterations | ForEach-Object {
-        [void] $Array.Add('tere')
+    'ArrayList'          = {
+        $text = $Text
+        $iterations = $Iterations
+        $Array = [Collections.ArrayList] @()
+        1..$iterations | ForEach-Object { [void] $Array.Add($text) }
     }
-}
-$List = {
-    $Array = New-Object 'Collections.Generic.List[string]'
-    $Iterations = $Iterations
-    1..$Iterations | ForEach-Object {
-        $Array.Add('tere')
+    'Generic list'       = {
+        $text = $Text
+        $iterations = $Iterations
+        $Array = New-Object 'Collections.Generic.List[string]'
+        1..$iterations | ForEach-Object { $Array.Add($text) }
     }
-}
-$Collection = {
-    $Array = New-Object 'Collections.ObjectModel.Collection[string]'
-    $Iterations = $Iterations
-    1..$Iterations | ForEach-Object {
-        $Array.Add('tere')
+    'Generic Collection' = {
+        $text = $Text
+        $iterations = $Iterations
+        $Array = New-Object 'Collections.ObjectModel.Collection[string]'
+        1..$iterations | ForEach-Object { $Array.Add($text) }
     }
 }
 
-if ($PSVersionTable.PSVersion.Major -gt 2) {
-    for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
-        Measure-Benchmark -RepeatCount $Repeat -Technique @{
-            'Array += in loop'   = $ArrayAdd
-            'Array assignment'   = $Assignment
-            'ArrayList'          = $ArrayList
-            'Generic list'       = $List
-            'Generic Collection' = $Collection
-        } -GroupName ('{0} times' -f $iterations)
-    }
-} else {
-    $iterations = $max
-    Write-Verbose -Message ('{0} times' -f $iterations)
+if ($PSVersionTable.PSVersion.Major -eq 2) {
+    Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
+}
 
-    @(
-        Measure-ScriptBlock -Method 'Array += in a loop' -Iterations $Repeat -ScriptBlock $ArrayAdd
-        Measure-ScriptBlock -Method 'Array assignment' -Iterations $Repeat -ScriptBlock $Assignment
-        Measure-ScriptBlock -Method 'ArrayList' -Iterations $Repeat -ScriptBlock $ArrayList
-        Measure-ScriptBlock -Method 'Generic list' -Iterations $Repeat -ScriptBlock $List
-        Measure-ScriptBlock -Method 'Generic Collection' -Iterations $Repeat -ScriptBlock $Collection
-    ) | Sort-Object TotalMilliSeconds
+for ($Iterations = $Min; $Iterations -le $Max; $Iterations *= 10) {
+    Measure-Benchmark -RepeatCount $Repeat -Technique $Technique -GroupName "$Iterations times"
 }
