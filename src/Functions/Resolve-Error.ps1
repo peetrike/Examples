@@ -1,13 +1,13 @@
 ﻿[CmdletBinding()]
 param (
-        [System.Management.Automation.ErrorRecord]
-    $ErrorRecord = $Error[0]
+        [Management.Automation.ErrorRecord]
+    $ErrorRecord
 )
 
 function Resolve-Error {
     [CmdletBinding()]
     param (
-            [System.Management.Automation.ErrorRecord]
+            [Management.Automation.ErrorRecord]
         $ErrorRecord = $Error[0]
     )
 
