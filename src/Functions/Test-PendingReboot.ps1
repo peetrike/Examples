@@ -115,7 +115,7 @@ function Test-PendingReboot {
             ConfigMgr                = $PendingConfigMgr
             WindowsUpdate            = $PendingWindowsUpdate
         }
-    }else {
+    } else {
         $PendingComponentBasedServicing -or
             $PendingComputerRename -or
             $PendingFileRename -or
