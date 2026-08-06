@@ -1,7 +1,7 @@
 ﻿Get-PSSessionConfiguration PowerShell.7.* | Unregister-PSSessionConfiguration
 
 $PluginSplat = @{
-    Path = $PSHOME.Replace($Env:ProgramFiles, '%ProgramFiles%')
+    Path      = $PSHOME.Replace($Env:ProgramFiles, '%ProgramFiles%')
     ChildPath = 'pwrshplugin.dll'
 }
 $WSManPluginPath = Join-Path @PluginSplat
