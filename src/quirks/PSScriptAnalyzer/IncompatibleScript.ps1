@@ -1,4 +1,4 @@
-class MyType {
+﻿class MyType {
     static [MyType] CreateFromString([string]$Str) {
         return [MyType]::new($Str)
     }
@@ -27,7 +27,7 @@ while ($stack.Count -gt 0) {
     Write-Information $t.GetString()
 }
 
-Get-EventLog -LogName System | ogv
+Get-EventLog -LogName System | Out-GridView
 
 Invoke-WebRequest -Uri 'https://aka.ms/everyonebehappy/' -NoProxy -SkipHeaderValidation
 
@@ -38,7 +38,7 @@ if (
         [ref]$modSpec
     )
 ) {
-    throw "Module specification did not parse"
+    throw 'Module specification did not parse'
 }
 
 $m = Import-Module -FullyQualifiedName $modSpec -PassThru

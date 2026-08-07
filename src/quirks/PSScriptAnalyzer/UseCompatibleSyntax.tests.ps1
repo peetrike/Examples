@@ -26,7 +26,7 @@ BeforeDiscovery {
         $testCases += @(
             @{
                 Script   = 'workflow Banana { Do-ExpensiveCommandOnAnotherMachine -Argument "Banana" }'
-                Versions = @(6)
+                Versions = @(6, 7)
             }
         )
     }
@@ -35,14 +35,9 @@ BeforeDiscovery {
             @{ Script = '$x = $path ? (Get-Content -Raw $path) : "default"'; Versions = @(3, 4, 5, 6) }
             @{ Script = '$x ??= 7'; Versions = @(3, 4, 5, 6) }
             @{ Script = 'git pull origin master && git pull upstream master'; Versions = @(3, 4, 5, 6) }
+            @{ Script = '${item}?.Invoke()'; Versions = @(3, 4, 5, 6) }
+            @{ Script = '${object}?.Member'; Versions = @(3, 4, 5, 6) }
         )
-
-        if ((Get-ExperimentalFeature -Name 'PSNullConditionalOperators').Enabled) {
-            $testCases += @(
-                @{ Script = '${item}?.Invoke()'; Versions = @(3, 4, 5, 6) }
-                @{ Script = '${object}?.Member'; Versions = @(3, 4, 5, 6) }
-            )
-        }
     }
     $testCasesAllPSVersions = foreach ($version in 3, 4, 5, 6) {
         foreach ($testCase in $testCases) {
@@ -60,17 +55,15 @@ BeforeAll {
 }
 
 Describe 'PSUseCompatibleSyntax' {
-    It "Finds issues for PSv<TargetVersion> in '<Script>'" -TestCases $testCasesAllPSVersions {
-        param([string]$Script, $Versions, $TargetVersion)
-
+    It "Finds issues for PSv<TargetVersion> in '<Script>'" -ForEach $testCasesAllPSVersions {
         $diagnostics = Invoke-ScriptAnalyzer -ScriptDefinition $Script -IncludeRule $RuleName -Settings @{
             Rules = @{ PSUseCompatibleSyntax = @{ Enable = $true; TargetVersions = @("$TargetVersion.0") } }
         }
 
         if ($Versions -contains $TargetVersion) {
-            $diagnostics.Count | Should -Be 1
+            $diagnostics.Count | Should-Be 1
         } else {
-            $diagnostics.Count | Should -Be 0
+            $diagnostics.Count | Should-Be 0
         }
     }
 
@@ -95,6 +88,6 @@ Describe 'PSUseCompatibleSyntax' {
             $expected = 4
         }
 
-        $diagnostics.Count | Should -Be $expected
+        $diagnostics.Count | Should-Be $expected
     }
 }
