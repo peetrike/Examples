@@ -39,3 +39,19 @@ function Get-FsmoRole {
 }
 
 Get-FsmoRole @PSBoundParameters
+
+# alternate take
+$RoleObj = @{}
+netdom.exe query fsmo |
+    Select-Object -First 5 |
+    ForEach-Object {
+        $role, $owner = $_ -split ' {2,}'
+        $RoleObj[$role] = $owner
+    }
+New-Object -TypeName psobject -Property $RoleObj
+
+# another alternate take, giving roles as separate objects
+netdom.exe query fsmo |
+    Select-Object -First 5 |
+    ForEach-Object { $_ -split ' {2,}' -join ',' } |
+    ConvertFrom-Csv -Header Role, Owner
