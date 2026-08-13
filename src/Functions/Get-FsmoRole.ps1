@@ -1,7 +1,9 @@
-﻿param (
+﻿#Requires -Version 3
+
+param (
         [Parameter(Position = 1)]
         [string[]]
-    $Role = '*'
+    $Role
 )
 
 function Get-FsmoRole {
@@ -10,15 +12,28 @@ function Get-FsmoRole {
             [string[]]
         $Role = '*'
     )
-    $ForestRole = Get-ADForest | Select-Object *master
-    $DomainRole = Get-ADDomain | Select-Object PDC*, *master
+
+    $ForestMap = @{
+        NamingRoleOwner = 'DomainNamingMaster'
+        SchemaRoleOwner = 'SchemaMaster'
+    }
+    $DomainMap = @{
+        InfrastructureRoleOwner = 'InfrastructureMaster'
+        PdcRoleOwner            = 'PDCEmulator'
+        RidRoleOwner            = 'RIDMaster'
+    }
+
+    $ForestRole = [DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest() | Select-Object *owner
+    $DomainRole = [DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain() | Select-Object *owner
 
     $OutputProps = @{}
     foreach ($r in $ForestRole.psobject.Properties.Name -like $Role) {
-        $OutputProps[$r] = $ForestRole.$r
+        $roleName = $ForestMap[$r]
+        $OutputProps[$roleName] = $ForestRole.$r
     }
     foreach ($r in $DomainRole.psobject.Properties.Name -like $Role) {
-        $OutputProps[$r] = $DomainRole.$r
+        $roleName = $DomainMap[$r]
+        $OutputProps[$roleName] = $DomainRole.$r
     }
     [PSCustomObject] $OutputProps
 }
