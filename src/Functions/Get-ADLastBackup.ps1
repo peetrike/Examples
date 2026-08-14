@@ -1,4 +1,9 @@
-﻿function Get-ADLastBackup {
+﻿<#
+    .LINK
+        https://devblogs.microsoft.com/scripting/use-a-powershell-script-to-show-active-directory-backup-status-info/
+#>
+
+function Get-ADLastBackup {
     [CmdletBinding()]
     param (
             [string]
