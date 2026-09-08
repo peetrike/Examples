@@ -15,18 +15,26 @@ $FileName = $MyInvocation.MyCommand.Path
 $Pattern = '\.VERSION\s+(\d+(?:\.\d+){1,3})$'
 
 $Technique = @{
-    'switch'        = {
+    'switch'          = {
         switch -Regex -File $FileName {
             $Pattern {
                 [version] $Matches[1]
             }
         }
     }
-    'Select-String' = {
+    'switch w/ break' = {
+        switch -Regex -File $FileName {
+            $Pattern {
+                [version] $Matches[1]
+                break
+            }
+        }
+    }
+    'Select-String'   = {
         $result = Select-String -Path $fileName -Pattern $Pattern
         [version] $result.Matches.Groups[1].Value
     }
-    '-match'        = {
+    '-match'          = {
         foreach ($line in Get-Content -Path $fileName) {
             if ($line -match $Pattern) {
                 [version] $Matches[1]
