@@ -7,7 +7,7 @@
         This example shows how script can emulate keyboard input and automate
         several activities that are normally done interactively
     .LINK
-        Windows Scripting Host: https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/8c6yea83(v=vs.84)
+        Windows Scripting Host SendKeys(): https://learn.microsoft.com/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/8c6yea83(v=vs.84)
     .LINK
         .NET Framework: https://learn.microsoft.com/dotnet/api/system.windows.forms.sendkeys
     .LINK
