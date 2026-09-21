@@ -10,7 +10,7 @@ param (
 try {
         $null = [Microsoft.PowerShell.Commands.DomainRole]::BackupDomainController
 } catch {
-    Add-Type -TypeDefinition @"
+    Add-Type -TypeDefinition @'
         using System;
         namespace Microsoft.PowerShell.Commands {
             public enum DomainRole {
@@ -28,7 +28,7 @@ try {
                 Server
             }
         }
-"@
+'@
 }
 
 $Technique = @{
