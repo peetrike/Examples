@@ -3,6 +3,14 @@
 
 <#PSScriptInfo
     .VERSION 3.52.140
+
+    .GUID cbd007e6-bc81-46e5-b4f4-09b24b389da5
+    .AUTHOR Peter Wawa
+#>
+
+<#
+    .DESCRIPTION
+        Benchmark different techniques for searching file content.
 #>
 
 
@@ -47,6 +55,11 @@ $Technique = @{
 if ($PSVersionTable.PSVersion.Major -eq 2) {
     Write-Verbose -Message 'PowerShell 2'
     Import-Module .\measure.psm1
+} elseif ($PSVersionTable.PSVersion.Major -ge 5) {
+    $Technique.cmdlet = {
+        $result = Test-ScriptFileInfo -Path $fileName
+        $result.version
+    }
 }
 
 for ($iterations = $Min; $iterations -le $Max; $iterations *= 10) {
